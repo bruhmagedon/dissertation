@@ -21,6 +21,12 @@ export type LogEntry =
 
 export const sales = [10, 20, 30, 40] as const;
 
+export const selectionModes = [
+  { id: "normal", label: "Обычная выборка", description: "Каждый вызов filter возвращает новый массив." },
+  { id: "reuse-array", label: "Переиспользование массива", description: "Если длина и элементы совпадают по порядку, возвращается предыдущий массив." },
+] as const;
+export type SelectionMode = (typeof selectionModes)[number]["id"];
+
 export const scenarios = {
   A: [
     { type: "read" },
@@ -67,7 +73,8 @@ export function snapshotFromJournal(journal: readonly LogEntry[]) {
 }
 export type Snapshot = ReturnType<typeof snapshotFromJournal>;
 
-export function createExperiment() {
+export function createExperiment(mode: SelectionMode = "normal") {
+  let previousSelection: number[] | undefined;
   const threshold = signal(10);
   const calls = { filtered: 0, sum: 0, count: 0, average: 0 };
 
@@ -105,10 +112,14 @@ export function createExperiment() {
   const filtered = computed(() => {
     called("filtered");
     const minimum = readValue("filtered", "threshold", () => threshold.value);
-    return recorded(
-      "filtered",
-      sales.filter((sale) => sale >= minimum),
-    );
+    const next = sales.filter((sale) => sale >= minimum);
+    if (mode === "reuse-array" && previousSelection &&
+      next.length === previousSelection.length &&
+      next.every((sale, index) => sale === previousSelection![index])) {
+      return recorded("filtered", previousSelection);
+    }
+    previousSelection = next;
+    return recorded("filtered", next);
   });
 
   const sum = computed(() => {
@@ -150,8 +161,8 @@ export function createExperiment() {
   };
 }
 
-export function runScenario(name: keyof typeof scenarios) {
-  const experiment = createExperiment();
+export function runScenario(name: keyof typeof scenarios, mode: SelectionMode = "normal") {
+  const experiment = createExperiment(mode);
   for (const operation of scenarios[name]) experiment.execute(operation);
   return experiment;
 }

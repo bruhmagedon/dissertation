@@ -1,16 +1,19 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import type { MutableRefObject } from "react";
-import { ListTree, Network } from "lucide-react";
+import { ChevronDown, ChevronUp, Crosshair, ListTree, Network, Rows3 } from "lucide-react";
 import {
   Background,
   BackgroundVariant,
   BaseEdge,
+  EdgeLabelRenderer,
   Controls,
+  ControlButton,
   Handle,
   MarkerType,
   Panel,
   Position,
   ReactFlow,
+  useReactFlow,
 } from "@xyflow/react";
 import type { Edge, EdgeProps, Node, NodeProps, Viewport } from "@xyflow/react";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +25,7 @@ import {
   computationCount,
   nodeLabels,
   operationTraces,
+  operationSteps,
   requestCount,
   traceFrame,
 } from "../trace.ts";
@@ -35,7 +39,7 @@ const formulas = {
   average: "сумма / количество",
 };
 type GraphNode = Node<
-  { title: string; formula: string; value: Value | undefined; calls?: number },
+  { title: string; formula: string; value: Value | undefined; calls?: number; delta?: number; ready?: boolean },
   "experiment"
 >;
 type TreeNode = Node<
@@ -48,10 +52,11 @@ type TreeNode = Node<
     requestId?: number;
     kind: "request" | "validation" | "write";
     active: boolean;
+    activeEvent?: string;
   },
   "tree"
 >;
-type TreeEdge = Edge<{ ready: boolean; active: boolean }, "tree-edge">;
+type TreeEdge = Edge<{ ready: boolean; active: boolean; validation?: boolean; requestId?: number }, "tree-edge">;
 
 function ExperimentNode({ id, data }: NodeProps<GraphNode>) {
   return (
@@ -67,7 +72,7 @@ function ExperimentNode({ id, data }: NodeProps<GraphNode>) {
       <div className="node-formula">{data.formula}</div>
       {data.calls !== undefined && (
         <div className="node-counter" data-testid={`calls-${id}`}>
-          {computationCount(data.calls)} с начала прогона
+          ×{data.calls} всего · {data.ready ? "готовый результат" : `+${data.delta ?? 0} сейчас`}
         </div>
       )}
       {id !== "average" && <Handle type="source" position={Position.Right} />}
@@ -91,6 +96,7 @@ function RequestNode({ data }: NodeProps<TreeNode>) {
         <strong>{data.kind === "write" ? "Запись порога" : nodeLabels[data.node]}</strong>
         {data.requestId !== undefined && <span className="request-id">#{data.requestId}</span>}
       </div>
+      {data.activeEvent && <div className="request-card-event">{data.activeEvent}</div>}
       <div className="request-card-result">
         {data.value === undefined ? "Ожидает завершения" : formatValue(data.value)}
       </div>
@@ -104,9 +110,11 @@ function RequestNode({ data }: NodeProps<TreeNode>) {
 
 function RequestEdge(props: EdgeProps<TreeEdge>) {
   // The left gutter keeps an edge to a later sibling away from intervening cards.
-  const gutter = Math.min(props.sourceX, props.targetX) - 24;
+  const validation = props.data?.validation;
+  const gutter = Math.min(props.sourceX, props.targetX) - (validation ? 50 : 24);
   const path = `M ${props.sourceX} ${props.sourceY} H ${gutter} V ${props.targetY} H ${props.targetX}`;
   return (
+    <>
     <BaseEdge
       id={props.id}
       path={path}
@@ -116,10 +124,13 @@ function RequestEdge(props: EdgeProps<TreeEdge>) {
       data-target={props.target}
       style={{
         stroke: props.data?.active ? "var(--primary)" : "var(--muted-foreground)",
-        strokeWidth: props.data?.active ? 2.5 : 1.5,
-        strokeDasharray: props.data?.ready ? "6 4" : undefined,
+        strokeWidth: props.data?.active ? 2.5 : validation ? 1 : 1.5,
+        strokeDasharray: validation ? "2 6" : props.data?.ready ? "6 4" : undefined,
       }}
     />
+    {validation && <EdgeLabelRenderer><span className="ready-edge-label validation-edge-label" style={{ transform: `translate(-100%, -50%) translate(${gutter - 5}px, ${props.targetY}px)` }}>Проверка зависимости · запрос #{props.data?.requestId}</span></EdgeLabelRenderer>}
+    {props.data?.ready && <EdgeLabelRenderer><span className="ready-edge-label" style={{ transform: `translate(-100%, -50%) translate(${gutter - 5}px, ${(props.sourceY + props.targetY) / 2}px)` }}>Готовый результат</span></EdgeLabelRenderer>}
+    </>
   );
 }
 
@@ -146,7 +157,8 @@ const dependencyEdges: Edge[] = [
   type: "smoothstep",
 }));
 
-function Dependencies({ snapshot, viewport, theme }: { snapshot: Snapshot; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark" }) {
+function Dependencies({ snapshot, viewport, theme, trace }: { snapshot: Snapshot; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark"; trace?: OperationTrace }) {
+  const shown = trace?.after ?? snapshot;
   const nodes: GraphNode[] = (["threshold", "filtered", "sum", "count", "average"] as NodeId[]).map(
     (id) => ({
       id,
@@ -155,12 +167,36 @@ function Dependencies({ snapshot, viewport, theme }: { snapshot: Snapshot; viewp
       data: {
         title: nodeLabels[id],
         formula: formulas[id],
-        value: id === "threshold" ? snapshot.threshold : snapshot.values[id],
-        calls: id === "threshold" ? undefined : snapshot.calls[id],
+        value: id === "threshold" ? shown.threshold : shown.values[id],
+        calls: id === "threshold" ? undefined : shown.calls[id],
+        delta: id === "threshold" || !trace ? 0 : trace.after.calls[id] - trace.before.calls[id],
+        ready: id !== "threshold" && !!trace && trace.requests.some((request) => request.node === id && request.executions === 0) && trace.after.calls[id] === trace.before.calls[id],
       },
     }),
   );
   return <FlowCanvas nodes={nodes} edges={dependencyEdges} viewport={viewport} theme={theme} />;
+}
+
+function CenterGraphButton() {
+  const flow = useReactFlow();
+
+  function centerGraph() {
+    const nodes = flow.getNodes().filter((node) => !node.hidden);
+    if (nodes.length === 0) return;
+    const bounds = flow.getNodesBounds(nodes);
+    void flow.setCenter(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2, {
+      zoom: flow.getZoom(),
+      duration: 300,
+    });
+  }
+
+  return (
+    <Hint text="Центрировать граф">
+      <ControlButton aria-label="Центрировать граф" onClick={centerGraph}>
+        <Crosshair aria-hidden="true" />
+      </ControlButton>
+    </Hint>
+  );
 }
 
 function FlowCanvas({
@@ -206,9 +242,11 @@ function FlowCanvas({
         }}
       >
         <Background variant={BackgroundVariant.Dots} color="color-mix(in oklch, var(--muted-foreground) 45%, var(--muted))" gap={22} size={1.5} />
-        <Controls showInteractive={false} />
+        <Controls showInteractive={false}>
+          <CenterGraphButton />
+        </Controls>
         {controls && (
-          <Panel position="top-center" className="reading-panel">
+          <Panel position="top-right" className="reading-panel">
             {controls}
           </Panel>
         )}
@@ -217,16 +255,19 @@ function FlowCanvas({
   );
 }
 
-function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot; trace: OperationTrace; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark" }) {
-  const [step, setStep] = useState<number | null>(null);
-  const frame = traceFrame(snapshot.log, trace, step);
+function ReadingView({ snapshot, trace, viewport, theme, activeStep, onStepChange }: { snapshot: Snapshot; trace: OperationTrace; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark"; activeStep: number | null; onStepChange: (index: number | null) => void }) {
+  const steps = operationSteps(snapshot.log, trace);
+  const selectedStep = activeStep === null ? -1 : steps.findIndex((item) => item.start === activeStep);
+  const step = selectedStep < 0 ? null : selectedStep;
+  const setStep = (next: number | null) => onStepChange(next === null ? null : steps[next].start);
+  const frame = traceFrame(snapshot.log, trace, step, steps);
   const computations =
     Object.values(trace.after.calls).reduce((sum, count) => sum + count, 0) -
     Object.values(trace.before.calls).reduce((sum, count) => sum + count, 0);
   const completedComputations = Object.values(frame.delta).reduce((sum, count) => sum + count, 0);
   const root = trace.requests.find((item) => item.request?.from === "external");
   const rootCompleted = root !== undefined && root.end < frame.end;
-  const current = step === null ? null : trace.timeline[step];
+  const current = step === null ? null : steps[step];
   const depth = new Map<string, number>();
   const nodes: TreeNode[] = trace.timeline.map((item, index) => {
     const level = item.parentCardId === null ? 0 : (depth.get(item.parentCardId) ?? -1) + 1;
@@ -247,7 +288,7 @@ function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot;
       id: item.id,
       type: "tree",
       position: { x: level * 105, y: index * 128 },
-      hidden: step !== null && index > step,
+      hidden: step !== null && item.start >= frame.end,
       data: {
         node: item.node,
         order: index + 1,
@@ -256,7 +297,14 @@ function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot;
         value: complete ? item.value : undefined,
         status,
         executions: complete && item.node !== "threshold" ? item.executions : undefined,
-        active: step === index,
+        active: current?.cardId === item.id,
+        activeEvent: current?.cardId !== item.id ? undefined : current.kind === "finalization"
+          ? "Операция завершена · результат возвращён"
+          : current.kind === "computed"
+          ? `Запуск computed ${nodeLabels[current.node]} #${current.call} · запрос #${current.requestId}`
+          : current.kind === "validation"
+            ? "Запуск вычисления при проверке зависимости"
+            : `Начало обращения #${current.requestId}`,
       },
     };
   });
@@ -284,18 +332,20 @@ function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot;
             type: "tree-edge" as const,
             source: item.parentCardId,
             target: item.id,
-            hidden: step !== null && index > step,
-            markerEnd: {
+            hidden: step !== null && item.start >= frame.end,
+            markerEnd: item.kind === "validation" ? undefined : {
               type: MarkerType.ArrowClosed,
-              color: step === index ? "var(--primary)" : "var(--muted-foreground)",
+              color: current?.cardId === item.id && current.kind === "request" ? "var(--primary)" : "var(--muted-foreground)",
             },
             data: {
+              validation: item.kind === "validation",
+              requestId: item.validationRequestId,
               ready:
                 item.end < frame.end &&
                 item.kind === "request" &&
                 item.node !== "threshold" &&
                 item.executions === 0,
-              active: step === index,
+              active: current?.cardId === item.id,
             },
           },
         ],
@@ -347,45 +397,59 @@ function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot;
         reading
         controls={
           <>
-            <div className="reading-navigation">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={step === null}
-                onClick={() => setStep(step === 0 ? null : step! - 1)}
-              >
-                Назад
-              </Button>
-              <span data-testid="reading-step">
-                {step === null ? "Операция целиком" : `Шаг ${step + 1} из ${trace.timeline.length}`}
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={trace.timeline.length === 0 || step === trace.timeline.length - 1}
-                onClick={() => setStep(step === null ? 0 : step + 1)}
-              >
-                Вперёд
-              </Button>
+            <div className="reading-navigation" aria-label="Просмотр операции">
+              <Hint text="Назад">
+                <span>
+                  <Button
+                    size="icon-sm"
+                    variant="outline"
+                    aria-label="Назад"
+                    disabled={step === null}
+                    onClick={() => setStep(step === 0 ? null : step! - 1)}
+                  >
+                    <ChevronUp aria-hidden="true" />
+                  </Button>
+                </span>
+              </Hint>
+              <Hint text={step === null ? "Операция целиком" : `Шаг ${step + 1} из ${steps.length}${current ? ` · ${nodeLabels[current.node]}${current.kind === "finalization" ? " · Операция завершена" : current.kind === "validation" ? " · Проверка зависимости" : current.kind === "computed" ? ` · computed #${current.call} · запрос #${current.requestId}` : ""}` : ""}`}>
+                <span className="reading-step" tabIndex={0} data-testid="reading-step" aria-label={step === null ? "Операция целиком" : `Шаг ${step + 1} из ${steps.length}`}>
+                  {step === null ? "Вся" : `${step + 1} / ${steps.length}`}
+                </span>
+              </Hint>
+              <Hint text="Вперёд">
+                <span>
+                  <Button
+                    size="icon-sm"
+                    variant="outline"
+                    aria-label="Вперёд"
+                    disabled={steps.length === 0 || step === steps.length - 1}
+                    onClick={() => setStep(step === null ? 0 : step + 1)}
+                  >
+                    <ChevronDown aria-hidden="true" />
+                  </Button>
+                </span>
+              </Hint>
               {step !== null && (
-                <Button size="sm" variant="ghost" onClick={() => setStep(null)}>
-                  Вся операция
-                </Button>
+                <Hint text="Вся операция">
+                  <Button size="icon-sm" variant="ghost" aria-label="Вся операция" onClick={() => setStep(null)}>
+                    <Rows3 aria-hidden="true" />
+                  </Button>
+                </Hint>
               )}
             </div>
             {current && (
-              <p className="current-request" data-testid="current-request">
+              <span className="sr-only" data-testid="current-request">
                 {step! + 1}. {nodeLabels[current.node]}
-                {current.kind === "validation" ? " · Проверка зависимости" : ""}
-              </p>
+                {current.kind === "finalization" ? " · Операция завершена" : current.kind === "validation" ? " · Проверка зависимости" : current.kind === "computed" ? ` · computed #${current.call} · запрос #${current.requestId}` : ""}
+              </span>
             )}
           </>
         }
       />
       <p className="sr-only">
-        Сверху вниз — начала обращений и проверок. На шаге показаны завершения до следующего начала;
-        последний шаг включает завершение операции. Проверки показываются только по записанным
-        запускам computed. Сводка показывает выбранный момент, таблица ниже — весь прогон.
+        Сверху вниз — начала обращений и проверок. На каждом шаге показаны только события до
+        выделенной строки журнала включительно. Последний шаг показывает завершение операции.
+        Проверки показываются только по записанным запускам computed.
       </p>
     </>
   );
@@ -396,13 +460,20 @@ export function Graph({
   selectedEvent,
   selectionVersion,
   theme,
+  mode,
+  onModeChange,
+  activeStep,
+  onStepChange,
 }: {
+  mode: "dependencies" | "reading";
+  onModeChange: (mode: "dependencies" | "reading") => void;
+  activeStep: number | null;
+  onStepChange: (index: number | null) => void;
   theme: "light" | "dark";
   snapshot: Snapshot;
   selectedEvent: number | null;
   selectionVersion: number;
 }) {
-  const [mode, setMode] = useState<"dependencies" | "reading">("dependencies");
   const viewport = useRef<Viewport | null>(null);
   const traces = operationTraces(snapshot.log);
   const trace =
@@ -420,7 +491,7 @@ export function Graph({
           className={`mode-icon ${mode === "dependencies" ? "active" : ""}`}
           aria-label="Зависимости"
           aria-pressed={mode === "dependencies"}
-          onClick={() => setMode("dependencies")}
+          onClick={() => onModeChange("dependencies")}
         >
           <Network size={17} aria-hidden="true" />
         </button>
@@ -431,7 +502,7 @@ export function Graph({
           className="mode-switch"
           aria-label="Порядок чтения"
           aria-checked={mode === "reading"}
-          onClick={() => setMode(mode === "dependencies" ? "reading" : "dependencies")}
+          onClick={() => onModeChange(mode === "dependencies" ? "reading" : "dependencies")}
         >
           <span />
         </button>
@@ -441,16 +512,16 @@ export function Graph({
           className={`mode-icon ${mode === "reading" ? "active" : ""}`}
           aria-label="Порядок чтения"
           aria-pressed={mode === "reading"}
-          onClick={() => setMode("reading")}
+          onClick={() => onModeChange("reading")}
         >
           <ListTree size={17} aria-hidden="true" />
         </button>
         </Hint>
       </div>
       {mode === "dependencies" ? (
-        <Dependencies key="dependencies" snapshot={snapshot} viewport={viewport} theme={theme} />
+        <Dependencies key="dependencies" snapshot={snapshot} viewport={viewport} theme={theme} trace={trace} />
       ) : trace ? (
-        <ReadingView key={`${trace.start}:${selectionVersion}`} snapshot={snapshot} trace={trace} viewport={viewport} theme={theme} />
+        <ReadingView key={`${trace.start}:${selectionVersion}`} snapshot={snapshot} trace={trace} viewport={viewport} theme={theme} activeStep={activeStep} onStepChange={onStepChange} />
       ) : (
         <>
           <Dependencies key="empty-reading" snapshot={snapshot} viewport={viewport} theme={theme} />

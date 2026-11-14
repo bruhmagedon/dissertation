@@ -19,6 +19,7 @@ type TimelineItem = {
   value: Value;
   kind: "request" | "validation";
   executions: number;
+  validationRequestId?: number;
   // Only explicit reads have a request ID and a recorded caller.
   request?: RequestStart;
 };
@@ -92,6 +93,7 @@ export function operationTraces(log: readonly LogEntry[]) {
               value: returned.value,
               kind: "validation",
               executions: 1,
+              validationRequestId: event.requestId ?? undefined,
             });
           }
         }
@@ -121,9 +123,35 @@ export function operationTraces(log: readonly LogEntry[]) {
 
 export type OperationTrace = ReturnType<typeof operationTraces>[number];
 
-// A frame starts at an item and includes completions before the next start.
-export function traceFrame(log: readonly LogEntry[], trace: OperationTrace, step: number | null) {
-  const end = step === null ? trace.end : (trace.timeline[step + 1]?.start ?? trace.end);
+type OperationStep = {
+  start: number;
+  cardId: string;
+  kind: "request" | "validation" | "computed" | "finalization";
+  node: NodeId;
+  call?: number;
+  requestId?: number;
+};
+
+export function operationSteps(log: readonly LogEntry[], trace: OperationTrace): OperationStep[] {
+  return [
+    ...trace.timeline.map((item) => ({ start: item.start, cardId: item.id, kind: item.kind, node: item.node, call: undefined as number | undefined, requestId: item.request?.id })),
+    ...log.slice(trace.start, trace.end).flatMap<OperationStep>((event, offset) => {
+      const start = trace.start + offset;
+      if (event.type === "result") {
+        const root = trace.requests.find((item) => item.request?.from === "external");
+        return root ? [{ start, cardId: root.id, kind: "finalization" as const, node: root.node, call: undefined, requestId: root.request?.id }] : [];
+      }
+      if (event.type !== "computed") return [];
+      if (trace.timeline.some((item) => item.kind === "validation" && item.start === start)) return [];
+      const card = trace.timeline.find((item) => item.request?.id === event.requestId);
+      return card ? [{ start, cardId: card.id, kind: "computed" as const, node: event.node, call: event.call, requestId: event.requestId ?? undefined }] : [];
+    }),
+  ].sort((a, b) => a.start - b.start);
+}
+
+// A frame includes events only through the currently highlighted journal entry.
+export function traceFrame(log: readonly LogEntry[], trace: OperationTrace, step: number | null, steps: { start: number }[] = trace.timeline) {
+  const end = step === null ? trace.end : (steps[step]?.start ?? trace.start) + 1;
   const snapshot = snapshotFromJournal(log.slice(0, end));
   const delta = {
     filtered: snapshot.calls.filtered - trace.before.calls.filtered,

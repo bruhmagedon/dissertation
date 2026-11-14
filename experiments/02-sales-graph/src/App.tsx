@@ -7,9 +7,12 @@ import {
   sales,
   snapshotFromJournal,
 } from "../experiment.ts";
-import type { Operation, Snapshot } from "../experiment.ts";
+import type { Operation, Snapshot, SelectionMode } from "../experiment.ts";
 import { Graph } from "./Graph.tsx";
+import { Hypotheses } from "./Hypotheses.tsx";
+import { computationCount, nodeLabels, operationSteps, operationTraces } from "../trace.ts";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { ArrowDown, ArrowUp, Moon, RotateCcw, Sun } from "lucide-react";
 import { ThemeTogglerButton, ThemeTogglerButtonIcon } from "@/components/animate-ui/buttons/theme-toggler";
@@ -20,7 +23,9 @@ function Journal({
   snapshot,
   selected,
   onSelect,
+  activeStep,
 }: {
+  activeStep: number | null;
   snapshot: Snapshot;
   selected: number | null;
   onSelect: (index: number | null) => void;
@@ -37,6 +42,15 @@ function Journal({
     );
   const inspected =
     selected === null ? null : snapshotFromJournal(snapshot.log.slice(0, selected + 1));
+  const traces = operationTraces(snapshot.log);
+  const tracesByStart = new Map(traces.map((trace) => [trace.start, trace]));
+  const relatedTo = activeStep ?? selected;
+  const activeEvent = relatedTo === null ? undefined : snapshot.log[relatedTo];
+  const activeRequestId = activeEvent?.type === "read-start" || activeEvent?.type === "read-end"
+    ? activeEvent.id
+    : activeEvent?.type === "computed" || activeEvent?.type === "value"
+      ? activeEvent.requestId
+      : null;
 
   function exportJournal() {
     const text = snapshot.log.map(formatEntry).join("\n") + "\n";
@@ -55,6 +69,7 @@ function Journal({
       <div className="section-heading">
         <h2 id="journal-title">
           Журнал выполнения <span>{snapshot.log.length}</span>
+          <span className="journal-library">@preact/signals-core 1.14.5</span>
         </h2>
         <label className="filter-label">
           Показать{" "}
@@ -80,27 +95,59 @@ function Journal({
           data-testid="journal"
         >
           <ol className="journal-list">
-            {entries.map(({ event, index }) => (
-              <li key={index}>
+            {entries.map(({ event, index }) => {
+              const requestId = event.type === "read-start" || event.type === "read-end"
+                ? event.id
+                : event.type === "computed" || event.type === "value"
+                  ? event.requestId
+                  : null;
+              const related = activeRequestId != null && requestId === activeRequestId && index !== activeStep;
+              return <li key={index}>
                 <button
-                  className={`log-entry event-${event.type}`}
+                  className={`log-entry event-${event.type} ${activeStep === index ? "graph-step-active" : related ? "graph-step-related" : ""}`}
                   aria-pressed={selected === index}
+                  onMouseDown={(event) => event.preventDefault()}
                   onClick={() => onSelect(index)}
                 >
                   <span className="event-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span>{formatEntry(event)}</span>
+                  <span>{formatEntry(event)}{(() => {
+                    const trace = tracesByStart.get(index);
+                    if (!trace) return null;
+                    const events = snapshot.log.slice(trace.start, trace.end);
+                    const computed = events.filter((entry) => entry.type === "computed");
+                    const result = events.findLast((entry) => entry.type === "result");
+                    return <span className="journal-operation-result"> · {result?.type === "result" ? `Среднее: ${formatValue(result.value)} · ` : ""}{computationCount(computed.length)}{event.type === "read" && !computed.some((entry) => entry.type === "computed" && entry.node === "average") ? " · формула среднего пропущена" : ""}</span>;
+                  })()}</span>
                 </button>
-              </li>
-            ))}
+                {tracesByStart.has(index) && (() => {
+                  const trace = tracesByStart.get(index)!;
+                  const values = snapshot.log.slice(trace.start, trace.end).flatMap((entry, offset) => {
+                    if (entry.type !== "value") return [];
+                    const before = snapshotFromJournal(snapshot.log.slice(0, trace.start + offset));
+                    return [{ entry, before: before.values[entry.node] }];
+                  });
+                  return <Accordion type="single" collapsible className="journal-operation-details">
+                    <AccordionItem value="computations">
+                      <AccordionTrigger className="journal-accordion-trigger">Выполненные вычисления ({values.length})</AccordionTrigger>
+                      <AccordionContent className="journal-accordion-content">
+                        {values.length ? <ul>{values.map(({ entry, before }) => <li key={`${entry.node}-${entry.call}`}>
+                          {nodeLabels[entry.node]} #{entry.call}: {formatValue(before)} → {formatValue(entry.value)} · запрос #{entry.requestId ?? "—"}
+                        </li>)}</ul> : <p>Вычислений не было.</p>}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>;
+                })()}
+              </li>;
+            })}
           </ol>
           {entries.length === 0 && (
             <p className="empty-log">Вызовов пока нет. Прочитайте среднее.</p>
           )}
         </div>
         <aside className="journal-inspector" aria-label="Снимок события">
-          <Hint text="К графу · ↑">
+          <Hint text="К графу · G">
             <Button asChild variant="outline" size="icon-sm" className="scroll-to-graph">
-              <a href="#graph" aria-label="К графу" aria-keyshortcuts="ArrowUp"><ArrowUp aria-hidden="true" /></a>
+              <a href="#graph" aria-label="К графу" aria-keyshortcuts="G"><ArrowUp aria-hidden="true" /></a>
             </Button>
           </Hint>
           <h3>{selected === null ? "Как читать журнал" : `После события ${selected + 1}`}</h3>
@@ -150,34 +197,36 @@ export function App() {
     document.documentElement.style.colorScheme = theme;
     try { localStorage.setItem("reactivity-theme", theme); } catch { /* Storage is optional. */ }
   }, [theme]);
-  const [experiment, setExperiment] = useState(createExperiment);
+  const [selectionMode, setSelectionMode] = useState<SelectionMode>("normal");
+  const [experiment, setExperiment] = useState(() => createExperiment());
   const [snapshot, setSnapshot] = useState(() => experiment.snapshot());
   const [draft, setDraft] = useState("20");
   const [session, setSession] = useState("Ручной опыт");
   const [generation, setGeneration] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
+  const [graphMode, setGraphMode] = useState<"dependencies" | "reading">("dependencies");
+  const [activeStep, setActiveStep] = useState<number | null>(null);
 
   useEffect(() => {
     function handleScrollShortcut(event: KeyboardEvent) {
       if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      if (event.code !== "KeyJ" && event.code !== "KeyG") return;
       if (event.target instanceof Element && event.target.closest(
-        'input, textarea, select, button, a, [contenteditable]:not([contenteditable="false"]), [role="switch"], .journal-scroll, .snapshot-panel, .operation-summary',
+        'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="switch"], [role="slider"], [role="spinbutton"], [role="radiogroup"], [role="tablist"], [role="menu"], [role="dialog"], .journal-scroll, .snapshot-panel, .operation-summary',
       )) return;
-
-      const destination = event.key === "ArrowDown" ? "journal" : "graph";
-      const section = document.getElementById(destination);
+      const section = document.getElementById(event.code === "KeyJ" ? "journal" : "graph");
       if (!section) return;
       event.preventDefault();
       section.scrollIntoView();
     }
-
     window.addEventListener("keydown", handleScrollShortcut);
     return () => window.removeEventListener("keydown", handleScrollShortcut);
   }, []);
 
   function selectEvent(index: number | null) {
+    const trace = index === null ? undefined : operationTraces(snapshot.log).find((item) => item.start <= index && index < item.end);
+    setActiveStep(graphMode === "reading" && trace && index !== null && operationSteps(snapshot.log, trace).some((step) => step.start === index) ? index : null);
     setSelectedEvent(index);
     setSelectionVersion((version) => version + 1);
   }
@@ -190,9 +239,9 @@ export function App() {
     setSnapshot(experiment.execute(operation));
     setSession("Ручной опыт");
   }
-  function start(name?: "A" | "B") {
+  function start(name?: "A" | "B", mode = selectionMode) {
     selectEvent(null);
-    const next = name ? runScenario(name) : createExperiment();
+    const next = name ? runScenario(name, mode) : createExperiment(mode);
     setExperiment(next);
     setSnapshot(next.snapshot());
     setSession(name ? `Сценарий ${name}` : "Ручной опыт");
@@ -211,13 +260,24 @@ export function App() {
             selectedEvent={selectedEvent}
             selectionVersion={selectionVersion}
             theme={theme}
+            mode={graphMode}
+            onModeChange={(mode) => { setGraphMode(mode); setActiveStep(null); }}
+            activeStep={activeStep}
+            onStepChange={setActiveStep}
           />
-          <Hint text="К журналу · ↓">
+          <Hint text="К журналу · J">
             <Button asChild variant="outline" size="icon-sm" className="scroll-to-journal">
-              <a href="#journal" aria-label="К журналу" aria-keyshortcuts="ArrowDown"><ArrowDown aria-hidden="true" /></a>
+              <a href="#journal" aria-label="К журналу" aria-keyshortcuts="J"><ArrowDown aria-hidden="true" /></a>
             </Button>
           </Hint>
-          <aside className="operations" aria-label="Управление экспериментом">
+          <aside
+            className="operations"
+            aria-label="Управление экспериментом"
+            onPointerDownCapture={(event) => {
+              const control = (event.target as HTMLElement).closest<HTMLElement>("button, input, select, [tabindex]");
+              control?.focus({ preventScroll: true });
+            }}
+          >
             <Hint text="В выборку входят продажи, которые больше или равны порогу">
               <div className="sales-compact" tabIndex={0} aria-label={`Продажи: ${sales.join(", ")}`}>
                 <span>Продажи</span> {sales.join(" · ")}
@@ -278,6 +338,14 @@ export function App() {
           </aside>
           <aside className="snapshot-panel" aria-label="Результаты прогона">
             <div className="snapshot-heading"><strong>{session}</strong><span>Порог {snapshot.threshold}</span></div>
+            <div className="hypotheses-control">
+              <Hypotheses mode={selectionMode} onChange={(mode) => {
+                if (mode === selectionMode) return;
+                setSelectionMode(mode);
+                start(undefined, mode);
+              }} />
+              <span>{selectionMode === "normal" ? "Обычная выборка" : "Переиспользование массива"}</span>
+            </div>
             <div className={`snapshot-status ${stale ? "stale" : ""}`} role="status">
               {snapshot.evaluatedThreshold === null
                 ? "В прогоне ещё нет чтений. Все счётчики равны нулю."
@@ -316,6 +384,7 @@ export function App() {
           key={generation}
           snapshot={snapshot}
           selected={selectedEvent}
+          activeStep={activeStep}
           onSelect={selectEvent}
         />
       </div>
