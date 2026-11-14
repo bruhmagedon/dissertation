@@ -11,7 +11,8 @@ import type { Operation, Snapshot } from "../experiment.ts";
 import { Graph } from "./Graph.tsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowDown, ArrowUp, RotateCcw } from "lucide-react";
+import { ArrowDown, ArrowUp, Moon, RotateCcw, Sun } from "lucide-react";
+import { ThemeTogglerButton, ThemeTogglerButtonIcon } from "@/components/animate-ui/buttons/theme-toggler";
 import { Hint, TooltipProvider } from "@/components/ui/tooltip";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 
@@ -135,6 +136,20 @@ function Journal({
 }
 
 export function App() {
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    try {
+      const saved = localStorage.getItem("reactivity-theme");
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {
+      // The theme still works for this session if storage is unavailable.
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.style.colorScheme = theme;
+    try { localStorage.setItem("reactivity-theme", theme); } catch { /* Storage is optional. */ }
+  }, [theme]);
   const [experiment, setExperiment] = useState(createExperiment);
   const [snapshot, setSnapshot] = useState(() => experiment.snapshot());
   const [draft, setDraft] = useState("20");
@@ -195,6 +210,7 @@ export function App() {
             snapshot={snapshot}
             selectedEvent={selectedEvent}
             selectionVersion={selectionVersion}
+            theme={theme}
           />
           <Hint text="К журналу · ↓">
             <Button asChild variant="outline" size="icon-sm" className="scroll-to-journal">
@@ -245,6 +261,19 @@ export function App() {
               <Button size="icon-sm" variant="ghost" onClick={() => start()} aria-label="Начать с чистого графа">
                 <RotateCcw aria-hidden="true" />
               </Button>
+            </Hint>
+            <Hint text={theme === "dark" ? "Светлая тема" : "Тёмная тема"}>
+              <ThemeTogglerButton
+                theme={theme}
+                resolvedTheme={theme}
+                setTheme={(next) => { if (next !== "system") setTheme(next); }}
+                modes={["light", "dark"]}
+                variant="ghost"
+                size="sm"
+                aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
+              >
+                <ThemeTogglerButtonIcon light={<Sun />} dark={<Moon />} />
+              </ThemeTogglerButton>
             </Hint>
           </aside>
           <aside className="snapshot-panel" aria-label="Результаты прогона">

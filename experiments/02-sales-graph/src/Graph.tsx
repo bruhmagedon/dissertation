@@ -146,7 +146,7 @@ const dependencyEdges: Edge[] = [
   type: "smoothstep",
 }));
 
-function Dependencies({ snapshot, viewport }: { snapshot: Snapshot; viewport: MutableRefObject<Viewport | null> }) {
+function Dependencies({ snapshot, viewport, theme }: { snapshot: Snapshot; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark" }) {
   const nodes: GraphNode[] = (["threshold", "filtered", "sum", "count", "average"] as NodeId[]).map(
     (id) => ({
       id,
@@ -160,7 +160,7 @@ function Dependencies({ snapshot, viewport }: { snapshot: Snapshot; viewport: Mu
       },
     }),
   );
-  return <FlowCanvas nodes={nodes} edges={dependencyEdges} viewport={viewport} />;
+  return <FlowCanvas nodes={nodes} edges={dependencyEdges} viewport={viewport} theme={theme} />;
 }
 
 function FlowCanvas({
@@ -169,7 +169,9 @@ function FlowCanvas({
   reading = false,
   controls,
   viewport,
+  theme,
 }: {
+  theme: "light" | "dark";
   viewport: MutableRefObject<Viewport | null>;
   nodes: (GraphNode | TreeNode)[];
   edges: Edge[];
@@ -185,6 +187,7 @@ function FlowCanvas({
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        colorMode={theme}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultViewport={viewport.current ?? undefined}
@@ -214,7 +217,7 @@ function FlowCanvas({
   );
 }
 
-function ReadingView({ snapshot, trace, viewport }: { snapshot: Snapshot; trace: OperationTrace; viewport: MutableRefObject<Viewport | null> }) {
+function ReadingView({ snapshot, trace, viewport, theme }: { snapshot: Snapshot; trace: OperationTrace; viewport: MutableRefObject<Viewport | null>; theme: "light" | "dark" }) {
   const [step, setStep] = useState<number | null>(null);
   const frame = traceFrame(snapshot.log, trace, step);
   const computations =
@@ -340,6 +343,7 @@ function ReadingView({ snapshot, trace, viewport }: { snapshot: Snapshot; trace:
         nodes={nodes}
         edges={edges}
         viewport={viewport}
+        theme={theme}
         reading
         controls={
           <>
@@ -391,7 +395,9 @@ export function Graph({
   snapshot,
   selectedEvent,
   selectionVersion,
+  theme,
 }: {
+  theme: "light" | "dark";
   snapshot: Snapshot;
   selectedEvent: number | null;
   selectionVersion: number;
@@ -442,12 +448,12 @@ export function Graph({
         </Hint>
       </div>
       {mode === "dependencies" ? (
-        <Dependencies key="dependencies" snapshot={snapshot} viewport={viewport} />
+        <Dependencies key="dependencies" snapshot={snapshot} viewport={viewport} theme={theme} />
       ) : trace ? (
-        <ReadingView key={`${trace.start}:${selectionVersion}`} snapshot={snapshot} trace={trace} viewport={viewport} />
+        <ReadingView key={`${trace.start}:${selectionVersion}`} snapshot={snapshot} trace={trace} viewport={viewport} theme={theme} />
       ) : (
         <>
-          <Dependencies key="empty-reading" snapshot={snapshot} viewport={viewport} />
+          <Dependencies key="empty-reading" snapshot={snapshot} viewport={viewport} theme={theme} />
           <div className="operation-summary">Выберите операцию в журнале или прочитайте среднее.</div>
         </>
       )}
