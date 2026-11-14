@@ -365,7 +365,7 @@ function ReadingView({ snapshot, trace, viewport, theme, activeStep, onStepChang
             : `чтение среднего${rootCompleted ? ` = ${formatValue(root.value)}` : ""}`}
         </strong>
         <span>
-          Вычислений: {completedComputations} · Обращений:{" "}
+          Вычислений: {completedComputations} · Записанные чтения:{" "}
           {trace.requests.filter((item) => item.start < frame.end).length}
         </span>
         {trace.operation.type === "read" &&

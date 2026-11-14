@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   createExperiment,
   formatEntry,
   formatValue,
   runScenario,
+  selectionModes,
   sales,
   snapshotFromJournal,
 } from "../experiment.ts";
 import type { Operation, Snapshot, SelectionMode } from "../experiment.ts";
 import { Graph } from "./Graph.tsx";
 import { Hypotheses } from "./Hypotheses.tsx";
+import { CompareRuns } from "./CompareRuns.tsx";
+import type { SavedRun } from "./CompareRuns.tsx";
 import { computationCount, nodeLabels, operationSteps, operationTraces } from "../trace.ts";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -207,6 +210,40 @@ export function App() {
   const [selectionVersion, setSelectionVersion] = useState(0);
   const [graphMode, setGraphMode] = useState<"dependencies" | "reading">("dependencies");
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [comparisonRuns, setComparisonRuns] = useState<SavedRun[]>([]);
+  const comparisonExperiments = useRef(new Map<SelectionMode, ReturnType<typeof createExperiment>>());
+
+  function openComparison(open: boolean) {
+    if (open) {
+      const operations = snapshot.log.filter((event): event is Operation => event.type === "write" || event.type === "read");
+      const runs = selectionModes.map(({ id }) => {
+        const next = createExperiment(id);
+        for (const operation of operations) next.execute(operation);
+        comparisonExperiments.current.set(id, next);
+        return { mode: id, snapshot: next.snapshot() };
+      });
+      setComparisonRuns(runs);
+    }
+    setComparisonOpen(open);
+  }
+
+  function inspectComparison(run: SavedRun, operation: number) {
+    const saved = comparisonExperiments.current.get(run.mode);
+    if (!saved) return;
+    setExperiment(saved);
+    setSnapshot(run.snapshot);
+    setSelectionMode(run.mode);
+    setSession("Сравнение прогонов");
+    setSelectedEvent(operation);
+    setSelectionVersion((version) => version + 1);
+    setActiveStep(null);
+    setGraphMode("reading");
+    setGeneration((value) => value + 1);
+    setDraft(String(run.snapshot.threshold));
+    setComparisonOpen(false);
+    requestAnimationFrame(() => document.getElementById("graph")?.scrollIntoView());
+  }
 
   useEffect(() => {
     function handleScrollShortcut(event: KeyboardEvent) {
@@ -240,6 +277,9 @@ export function App() {
     setSession("Ручной опыт");
   }
   function start(name?: "A" | "B", mode = selectionMode) {
+    setComparisonOpen(false);
+    setComparisonRuns([]);
+    comparisonExperiments.current.clear();
     selectEvent(null);
     const next = name ? runScenario(name, mode) : createExperiment(mode);
     setExperiment(next);
@@ -344,6 +384,7 @@ export function App() {
                 setSelectionMode(mode);
                 start(undefined, mode);
               }} />
+              <CompareRuns open={comparisonOpen} onOpenChange={openComparison} runs={comparisonRuns} onSelect={inspectComparison} />
               <span>{selectionMode === "normal" ? "Обычная выборка" : "Переиспользование массива"}</span>
             </div>
             <div className={`snapshot-status ${stale ? "stale" : ""}`} role="status">

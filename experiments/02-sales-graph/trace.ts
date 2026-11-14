@@ -171,5 +171,5 @@ export function computationCount(count: number) {
 export function requestCount(count: number) {
   const last = count % 10;
   const teen = count % 100 >= 11 && count % 100 <= 14;
-  return `${count} ${!teen && last === 1 ? "обращение" : !teen && last >= 2 && last <= 4 ? "обращения" : "обращений"}`;
+  return `${count} ${!teen && last === 1 ? "записанное чтение" : !teen && last >= 2 && last <= 4 ? "записанных чтения" : "записанных чтений"}`;
 }
