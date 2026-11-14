@@ -65,58 +65,43 @@ test("пустая выборка и некорректный порог", () =>
   deepStrictEqual(JSON.parse(JSON.stringify(empty)), empty);
 });
 
-test("первые пять обращений связаны с конкретными выполнениями и завершениями", () => {
+test("шесть обращений первого чтения связаны с результатами и родителями", () => {
   const experiment = createExperiment();
   const snapshot = experiment.execute({ type: "read" });
   const [trace] = operationTraces(snapshot.log);
   deepStrictEqual(
-    trace.requests.map(({ from, to }) => [from, to]),
-    [
-      ["average", "sum"],
-      ["sum", "filtered"],
-      ["filtered", "threshold"],
-      ["average", "count"],
-      ["count", "filtered"],
-    ],
+    trace.timeline.map(({ node }) => node),
+    ["average", "sum", "filtered", "threshold", "count", "filtered"],
   );
   deepStrictEqual(
-    trace.requests.map(({ ready }) => ready),
-    [false, false, false, false, true],
+    trace.timeline.map(({ parentCardId }) => parentCardId),
+    [null, "1", "2", "3", "1", "5"],
+  );
+  deepStrictEqual(
+    trace.timeline.map(({ executions }) => executions),
+    [1, 1, 1, 0, 1, 0],
+  );
+  deepStrictEqual(
+    trace.timeline.map(({ value }) => value),
+    [25, 100, [10, 20, 30, 40], 10, 4, [10, 20, 30, 40]],
   );
   equal(trace.after.readings[0], 25);
-  const firstSelection = trace.requests[1];
-  const secondSelection = trace.requests[4];
-  equal(trace.requests[2].parentId, firstSelection.id);
-  equal(secondSelection.parentId, trace.requests[3].id);
-  equal(
-    snapshot.log.filter(
-      (event) =>
-        event.type === "computed" &&
-        event.node === "filtered" &&
-        event.requestId === firstSelection.id,
-    ).length,
-    1,
-  );
-  equal(
-    snapshot.log.filter(
-      (event) => event.type === "computed" && event.requestId === secondSelection.id,
-    ).length,
-    0,
-  );
-  const frames = trace.requests.map((_, step) => traceFrame(snapshot.log, trace, step));
+  const frames = trace.timeline.map((_, step) => traceFrame(snapshot.log, trace, step));
   deepStrictEqual(
     frames.map((frame) => frame.snapshot.calls.filtered),
-    [0, 0, 1, 1, 1],
+    [0, 0, 0, 1, 1, 1],
   );
   deepStrictEqual(
     frames.map((frame) => frame.snapshot.calls.average),
-    [0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 1],
   );
+  equal(trace.timeline[2].end < frames[2].end, false);
+  equal(trace.timeline[2].end < frames[3].end, true);
   deepStrictEqual(frames.at(-1)?.snapshot.calls, snapshot.calls);
   deepStrictEqual(experiment.snapshot(), snapshot);
 });
 
-test("порядок обновления берётся из событий, записи и повторные чтения не выдумывают стрелки", () => {
+test("проверки зависимостей и их дочерние обращения отражают журнал", () => {
   for (const name of ["A", "B"] as const) {
     const experiment = runScenario(name);
     const snapshot = experiment.snapshot();
@@ -128,26 +113,33 @@ test("порядок обновления берётся из событий, з
     );
     const updated = reads[1];
     deepStrictEqual(
-      updated.requests.map(({ from, to }) => [from, to]),
+      updated.timeline.map(({ node, kind }) => [node, kind]),
       [
-        ["filtered", "threshold"],
-        ["sum", "filtered"],
-        ["average", "sum"],
-        ["average", "count"],
-        ["count", "filtered"],
+        ["average", "request"],
+        ["filtered", "validation"],
+        ["threshold", "request"],
+        ["sum", "validation"],
+        ["filtered", "request"],
+        ["sum", "request"],
+        ["count", "request"],
+        ["filtered", "request"],
       ],
     );
-    equal(updated.requests[1].ready, true);
+    equal(updated.timeline[2].parentCardId, updated.timeline[1].id);
+    equal(updated.timeline[4].parentCardId, updated.timeline[3].id);
+    equal(updated.timeline[4].executions, 0);
     const repeated = reads.at(-1)!;
-    equal(repeated.requests.length, 0);
-    equal(repeated.after.readings.at(-1), 35);
+    equal(repeated.requests.length, 1);
+    equal(repeated.requests[0].node, "average");
+    equal(repeated.requests[0].executions, 0);
+    equal(repeated.requests[0].value, 35);
     deepStrictEqual(repeated.after.calls, repeated.before.calls);
     for (const trace of traces) {
       if (trace.operation.type === "write") {
         equal(trace.requests.length, 0);
         deepStrictEqual(trace.after.calls, trace.before.calls);
       }
-      for (let step = 0; step < trace.requests.length; step++)
+      for (let step = 0; step < trace.timeline.length; step++)
         traceFrame(snapshot.log, trace, step);
     }
     deepStrictEqual(experiment.snapshot(), snapshot);

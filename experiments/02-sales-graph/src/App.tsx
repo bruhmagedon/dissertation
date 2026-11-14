@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createExperiment,
   formatEntry,
@@ -11,7 +11,8 @@ import type { Operation, Snapshot } from "../experiment.ts";
 import { Graph } from "./Graph.tsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { ArrowDown, ArrowUp, RotateCcw } from "lucide-react";
+import { Hint, TooltipProvider } from "@/components/ui/tooltip";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 
 function Journal({
@@ -49,7 +50,7 @@ function Journal({
   }
 
   return (
-    <section className="journal-section" aria-labelledby="journal-title">
+    <section id="journal" className="journal-section" aria-labelledby="journal-title">
       <div className="section-heading">
         <h2 id="journal-title">
           Журнал выполнения <span>{snapshot.log.length}</span>
@@ -66,13 +67,9 @@ function Journal({
             <NativeSelectOption value="computed">Вызовы computed</NativeSelectOption>
           </NativeSelect>
         </label>
-        <Button
-          variant="outline"
-          onClick={exportJournal}
-          title="Скачать полный журнал без фильтрации"
-        >
-          Скачать TXT
-        </Button>
+        <Hint text="Скачать полный журнал без фильтрации">
+          <Button variant="outline" onClick={exportJournal}>Скачать TXT</Button>
+        </Hint>
       </div>
       <div className="journal-layout">
         <div
@@ -100,6 +97,11 @@ function Journal({
           )}
         </div>
         <aside className="journal-inspector" aria-label="Снимок события">
+          <Hint text="К графу · ↑">
+            <Button asChild variant="outline" size="icon-sm" className="scroll-to-graph">
+              <a href="#graph" aria-label="К графу" aria-keyshortcuts="ArrowUp"><ArrowUp aria-hidden="true" /></a>
+            </Button>
+          </Hint>
           <h3>{selected === null ? "Как читать журнал" : `После события ${selected + 1}`}</h3>
           {inspected ? (
             <>
@@ -140,6 +142,26 @@ export function App() {
   const [generation, setGeneration] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
+
+  useEffect(() => {
+    function handleScrollShortcut(event: KeyboardEvent) {
+      if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      if (event.target instanceof Element && event.target.closest(
+        'input, textarea, select, button, a, [contenteditable]:not([contenteditable="false"]), [role="switch"], .journal-scroll, .snapshot-panel, .operation-summary',
+      )) return;
+
+      const destination = event.key === "ArrowDown" ? "journal" : "graph";
+      const section = document.getElementById(destination);
+      if (!section) return;
+      event.preventDefault();
+      section.scrollIntoView();
+    }
+
+    window.addEventListener("keydown", handleScrollShortcut);
+    return () => window.removeEventListener("keydown", handleScrollShortcut);
+  }, []);
+
   function selectEvent(index: number | null) {
     setSelectedEvent(index);
     setSelectionVersion((version) => version + 1);
@@ -164,125 +186,102 @@ export function App() {
   }
 
   return (
+    <TooltipProvider>
     <main>
-      <header className="page-header">
-        <div>
-          <h1>Лаборатория реактивности</h1>
-          <p>Когда запись превращается в вычисление?</p>
-        </div>
-        <span className="library-label">
-          @preact/signals-core <strong>1.14.5</strong>
-        </span>
-      </header>
+      <h1 className="sr-only">Лаборатория реактивности</h1>
       <div className="workspace">
-        <aside className="operations" aria-label="Управление экспериментом">
-          <h2>Продажи</h2>
-          <div className="sales">
-            {sales.map((value) => (
-              <Badge key={value} variant="secondary">
-                {value}
-              </Badge>
-            ))}
-          </div>
-          <p className="muted">В выборку входят продажи ≥ порога.</p>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (validThreshold) execute({ type: "write", value: Number(draft) });
-            }}
-          >
-            <label htmlFor="threshold">Новый порог</label>
-            <div className="write-controls">
-              <Input
-                id="threshold"
-                type="number"
-                step="any"
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-              />
-              <Button variant="outline" disabled={!validThreshold} type="submit">
-                Записать
-              </Button>
-            </div>
-          </form>
-          <Button className="read-button" onClick={() => execute({ type: "read" })}>
-            Прочитать среднее
-          </Button>
-          <p className="operation-hint">Запись меняет вход. Только чтение запрашивает результат.</p>
-          <div className="scenario-controls">
-            <h2>Готовые сценарии</h2>
-            <Button
-              variant="outline"
-              className="h-auto w-full flex-col items-start gap-1 whitespace-normal py-3 text-left"
-              onClick={() => start("A")}
-            >
-              <strong>Запустить A</strong>
-              <span>Чтение после каждой записи</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto w-full flex-col items-start gap-1 whitespace-normal py-3 text-left"
-              onClick={() => start("B")}
-            >
-              <strong>Запустить B</strong>
-              <span>Две записи, затем чтение</span>
-            </Button>
-            <p className="muted">
-              Каждый запуск создаёт новый граф и сначала читает среднее при пороге 10.
-            </p>
-          </div>
-          <Button variant="link" className="h-auto px-0" onClick={() => start()}>
-            Начать с чистого графа
-          </Button>
-        </aside>
-        <section className="graph-section" aria-labelledby="graph-title">
-          <div className="section-heading">
-            <h2 id="graph-title">{session}</h2>
-            <span className="graph-note">Выберите операцию в журнале · холст можно двигать</span>
-          </div>
+        <section id="graph" className="graph-section" aria-label="Полотно эксперимента">
           <Graph
             snapshot={snapshot}
             selectedEvent={selectedEvent}
             selectionVersion={selectionVersion}
           />
-          <div className={`snapshot-status ${stale ? "stale" : ""}`} role="status">
-            {snapshot.evaluatedThreshold === null
-              ? "В прогоне ещё нет чтений. Все счётчики равны нулю."
-              : stale
-                ? `Текущий порог прогона — ${snapshot.threshold}. Последнее чтение было при пороге ${snapshot.evaluatedThreshold}.`
-                : `Последнее чтение в прогоне при пороге ${snapshot.evaluatedThreshold}.`}
-          </div>
-          <div className="readings">
-            <span>Результаты чтений</span>
-            <output aria-label="Результаты чтений" data-testid="readings">
-              {snapshot.readings.length
-                ? snapshot.readings.map(formatValue).join(" → ")
-                : "Ещё нет — прочитайте среднее"}
-            </output>
-          </div>
-          <table className="counter-table" aria-label="Счётчики вызовов computed">
-            <caption>Фактические вызовы computed</caption>
-            <thead>
-              <tr>
-                <th scope="col">Узел</th>
-                {["filtered", "sum", "count", "average"].map((node) => (
-                  <th scope="col" key={node}>
-                    {node}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">Вызовы</th>
-                {Object.entries(snapshot.calls).map(([node, count]) => (
-                  <td key={node} data-testid={`total-${node}`}>
-                    {count}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
+          <Hint text="К журналу · ↓">
+            <Button asChild variant="outline" size="icon-sm" className="scroll-to-journal">
+              <a href="#journal" aria-label="К журналу" aria-keyshortcuts="ArrowDown"><ArrowDown aria-hidden="true" /></a>
+            </Button>
+          </Hint>
+          <aside className="operations" aria-label="Управление экспериментом">
+            <Hint text="В выборку входят продажи, которые больше или равны порогу">
+              <div className="sales-compact" tabIndex={0} aria-label={`Продажи: ${sales.join(", ")}`}>
+                <span>Продажи</span> {sales.join(" · ")}
+              </div>
+            </Hint>
+            <form
+              className="write-controls"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (validThreshold) execute({ type: "write", value: Number(draft) });
+              }}
+            >
+              <label className="sr-only" htmlFor="threshold">Новый порог</label>
+              <Input
+                id="threshold"
+                className="w-[120px]! flex-none"
+                type="number"
+                step="any"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+              />
+              <Hint text="Записать новый порог">
+                <span tabIndex={validThreshold ? -1 : 0}>
+                  <Button size="sm" variant="outline" disabled={!validThreshold} type="submit">Записать</Button>
+                </span>
+              </Hint>
+            </form>
+            <Hint text="Прочитать среднее">
+              <Button size="sm" onClick={() => execute({ type: "read" })} aria-label="Прочитать среднее">Прочитать</Button>
+            </Hint>
+            <div className="scenario-controls" aria-label="Готовые сценарии">
+              <span>Сценарии</span>
+              <Hint text="Сценарий A: чтение после каждой записи">
+                <Button size="sm" variant="outline" onClick={() => start("A")} aria-label="Запустить сценарий A">A</Button>
+              </Hint>
+              <Hint text="Сценарий B: две записи, затем чтение">
+                <Button size="sm" variant="outline" onClick={() => start("B")} aria-label="Запустить сценарий B">B</Button>
+              </Hint>
+            </div>
+            <Hint text="Начать с чистого графа">
+              <Button size="icon-sm" variant="ghost" onClick={() => start()} aria-label="Начать с чистого графа">
+                <RotateCcw aria-hidden="true" />
+              </Button>
+            </Hint>
+          </aside>
+          <aside className="snapshot-panel" aria-label="Результаты прогона">
+            <div className="snapshot-heading"><strong>{session}</strong><span>Порог {snapshot.threshold}</span></div>
+            <div className={`snapshot-status ${stale ? "stale" : ""}`} role="status">
+              {snapshot.evaluatedThreshold === null
+                ? "В прогоне ещё нет чтений. Все счётчики равны нулю."
+                : stale
+                  ? `Текущий порог — ${snapshot.threshold}. Последнее чтение при пороге ${snapshot.evaluatedThreshold}.`
+                  : `Последнее чтение при пороге ${snapshot.evaluatedThreshold}.`}
+            </div>
+            <div className="readings">
+              <span>Результаты чтений</span>
+              <output aria-label="Результаты чтений" data-testid="readings">
+                {snapshot.readings.length
+                  ? snapshot.readings.map(formatValue).join(" → ")
+                  : "Ещё нет"}
+              </output>
+            </div>
+            <table className="counter-table" aria-label="Счётчики вызовов computed">
+              <caption>Вычисления</caption>
+              <thead>
+                <tr>
+                  {["filtered", "sum", "count", "average"].map((node) => (
+                    <th scope="col" key={node}>{node}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {Object.entries(snapshot.calls).map(([node, count]) => (
+                    <td key={node} data-testid={`total-${node}`}>{count}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </aside>
         </section>
         <Journal
           key={generation}
@@ -291,10 +290,7 @@ export function App() {
           onSelect={selectEvent}
         />
       </div>
-      <footer>
-        Общая выборка для суммы и количества. Интерфейс показывает снимки журнала и не подписывается
-        на signals.
-      </footer>
     </main>
+    </TooltipProvider>
   );
 }
