@@ -1,0 +1,12 @@
+{
+  "name": "experiment-01-signal-computed",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node script.js"
+  },
+  "dependencies": {
+    "@preact/signals-core": "1.14.5"
+  },
+  "packageManager": "pnpm@11.1.1"
+}

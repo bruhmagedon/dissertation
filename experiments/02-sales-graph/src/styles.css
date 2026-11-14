@@ -1,0 +1,556 @@
+@layer components {
+  :root {
+    font-size: 15px;
+    font-synthesis: none;
+  }
+  .log-entry:hover {
+    background: var(--accent);
+  }
+  .react-flow {
+    --xy-controls-button-background-color-default: var(--card);
+    --xy-controls-button-background-color-hover-default: var(--muted);
+    --xy-controls-button-color-default: var(--foreground);
+    --xy-controls-button-border-color-default: var(--border);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+  }
+  button,
+  select {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  main {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 32px 36px 20px;
+  }
+  h1 {
+    font-size: 27px;
+    letter-spacing: -0.025em;
+    margin: 0 0 6px;
+    font-weight: 650;
+  }
+  h2 {
+    font-size: 17px;
+    margin: 0;
+    font-weight: 650;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 0 0 12px;
+  }
+  p {
+    line-height: 1.5;
+    margin: 0 0 16px;
+    max-width: 70ch;
+  }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  .page-header p {
+    color: var(--muted-foreground);
+    margin: 0;
+  }
+  .library-label {
+    color: var(--muted-foreground);
+    font-size: 13px;
+  }
+  .library-label strong {
+    color: var(--foreground);
+    margin-left: 8px;
+  }
+  .workspace {
+    display: grid;
+    grid-template-columns: 285px minmax(0, 1fr);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .operations {
+    padding: 26px 24px;
+    border-right: 1px solid var(--border);
+    background: var(--muted);
+  }
+  .sales {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0 10px;
+  }
+  .sales span {
+    background: var(--secondary);
+    border-radius: var(--radius-md);
+    padding: 6px 12px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .muted,
+  .operation-hint {
+    font-size: 13px;
+    color: var(--muted-foreground);
+  }
+  form {
+    margin-top: 26px;
+  }
+  form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .write-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .read-button {
+    width: 100%;
+    margin: 12px 0 10px;
+  }
+  .operation-hint {
+    margin-bottom: 28px;
+  }
+  .scenario-controls {
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+  }
+  .scenario-controls button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-top: 12px;
+  }
+  .scenario-controls button span {
+    display: block;
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-top: 5px;
+  }
+  .scenario-controls p {
+    margin: 12px 0 18px;
+  }
+  .section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 26px;
+  }
+  .graph-note {
+    color: var(--muted-foreground);
+    font-size: 12px;
+    text-align: right;
+  }
+  .graph {
+    height: 370px;
+    background: var(--muted);
+    border-block: 1px solid var(--border);
+  }
+  .graph-node {
+    width: 190px;
+    padding: 15px 16px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+  }
+  .graph-node-result {
+    border-color: var(--primary);
+    background: color-mix(in oklch, var(--primary) 8%, var(--card));
+  }
+  .node-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 14px;
+  }
+  .node-value {
+    font-size: 20px;
+    font-weight: 650;
+    margin: 13px 0 10px;
+    min-height: 28px;
+    font-variant-numeric: tabular-nums;
+  }
+  .node-formula {
+    color: var(--muted-foreground);
+    font-size: 11px;
+  }
+  .react-flow__handle {
+    background: var(--muted-foreground);
+    border: 2px solid var(--card);
+    width: 9px;
+    height: 9px;
+  }
+  .react-flow__edge-path {
+    stroke: var(--muted-foreground);
+    stroke-width: 1.5;
+  }
+  .snapshot-status {
+    padding: 12px 26px;
+    color: var(--muted-foreground);
+    font-size: 13px;
+    min-height: 44px;
+    background: var(--muted);
+  }
+  .snapshot-status.stale {
+    color: var(--primary);
+    background: color-mix(in oklch, var(--primary) 10%, var(--background));
+  }
+  .readings {
+    display: flex;
+    align-items: baseline;
+    gap: 22px;
+    padding: 20px 26px;
+  }
+  .readings > span {
+    color: var(--muted-foreground);
+    font-size: 13px;
+  }
+  .readings output {
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .counter-table {
+    border-collapse: collapse;
+    width: calc(100% - 52px);
+    margin: 0 26px 24px;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+  .counter-table caption {
+    text-align: left;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+  .counter-table th,
+  .counter-table td {
+    text-align: right;
+    padding: 9px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .counter-table th:first-child {
+    text-align: left;
+    padding-left: 0;
+  }
+  .counter-table thead th {
+    color: var(--muted-foreground);
+    font-weight: 400;
+  }
+  .counter-table tbody td {
+    font-weight: 650;
+  }
+  .journal-section {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--border);
+  }
+  .section-heading h2 > span {
+    color: var(--muted-foreground);
+    font-size: 13px;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted-foreground);
+  }
+  .journal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    border-top: 1px solid var(--border);
+  }
+  .journal-scroll {
+    height: 278px;
+    overflow: auto;
+    padding: 10px 0;
+    scrollbar-color: var(--border) var(--muted);
+    scrollbar-width: thin;
+  }
+  .journal-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .log-entry {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    text-align: left;
+    padding: 8px 26px;
+    font-family: "Cascadia Code", "DejaVu Sans Mono", monospace;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .log-entry[aria-pressed="true"] {
+    background: var(--accent);
+  }
+  .event-index {
+    color: var(--muted-foreground);
+    min-width: 24px;
+  }
+  .event-computed {
+    color: var(--primary);
+  }
+  .event-result {
+    background: var(--muted);
+    font-weight: 650;
+  }
+  .event-value {
+    color: var(--muted-foreground);
+  }
+  .journal-inspector {
+    background: var(--muted);
+    padding: 22px 24px;
+    border-left: 1px solid var(--border);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .journal-inspector p {
+    color: var(--muted-foreground);
+  }
+  .journal-inspector dl {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 6px;
+  }
+  .journal-inspector dd {
+    margin: 0;
+  }
+  .empty-log {
+    padding: 16px 26px;
+    font-size: 13px;
+    color: var(--muted-foreground);
+  }
+  footer {
+    padding-top: 18px;
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+  @media (min-width: 1450px) {
+    .graph {
+      height: 410px;
+    }
+  }
+  @media (max-width: 1050px) {
+    main {
+      padding: 24px 18px;
+    }
+    .workspace {
+      grid-template-columns: 250px minmax(0, 1fr);
+    }
+    .operations {
+      padding: 22px 18px;
+    }
+    .section-heading {
+      padding: 20px;
+    }
+    .graph-note {
+      max-width: 160px;
+    }
+    .readings {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .journal-layout {
+      grid-template-columns: minmax(0, 1fr) 250px;
+    }
+  }
+  @media (max-width: 700px) {
+    main {
+      padding: 20px 12px;
+    }
+    h1 {
+      font-size: 23px;
+    }
+    .page-header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .workspace {
+      display: flex;
+      flex-direction: column;
+    }
+    .operations {
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .scenario-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .scenario-controls h2,
+    .scenario-controls p {
+      grid-column: 1 / -1;
+    }
+    .scenario-controls button {
+      margin-top: 0;
+    }
+    .scenario-controls p {
+      margin: 0;
+    }
+    .graph {
+      height: 300px;
+    }
+    .graph-note {
+      max-width: 130px;
+    }
+    .counter-table {
+      width: calc(100% - 32px);
+      margin-inline: 16px;
+      font-size: 11px;
+    }
+    .counter-table th,
+    .counter-table td {
+      padding-inline: 4px;
+    }
+    .journal-section .section-heading {
+      flex-wrap: wrap;
+    }
+    .journal-layout {
+      display: block;
+    }
+    .journal-inspector {
+      border-left: 0;
+      border-top: 1px solid var(--border);
+    }
+    .log-entry {
+      padding-inline: 16px;
+      gap: 10px;
+    }
+  }
+}
+
+@layer components {
+  .graph-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 26px 16px;
+  }
+  .graph {
+    height: 460px;
+  }
+  .graph.graph-reading {
+    height: 540px;
+  }
+  .graph-node {
+    width: 230px;
+  }
+  .node-heading {
+    flex-wrap: wrap;
+  }
+  .node-counter {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted-foreground);
+  }
+  .node-delta {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .node-counter,
+  .node-delta {
+    font-variant-numeric: tabular-nums;
+  }
+  .operation-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding: 14px 26px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .operation-summary strong {
+    width: 100%;
+  }
+  .reading-panel {
+    max-width: calc(100% - 24px);
+    padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .reading-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .current-request {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--primary);
+  }
+  .trace-explanation {
+    padding: 12px 26px;
+    margin: 0;
+    max-width: none;
+    font-size: 12px;
+    color: var(--muted-foreground);
+  }
+  .request-label {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 7px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--foreground);
+    font-size: 11px;
+    line-height: 1.3;
+    max-width: 120px;
+    text-align: center;
+  }
+  .request-active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--accent);
+  }
+  .request-label strong {
+    font-size: 13px;
+  }
+  @media (max-width: 700px) {
+    .graph {
+      height: 360px;
+    }
+    .graph.graph-reading {
+      height: 430px;
+    }
+    .graph-toolbar {
+      padding-inline: 20px;
+    }
+    .operation-summary,
+    .trace-explanation {
+      padding-inline: 20px;
+    }
+  }
+}
