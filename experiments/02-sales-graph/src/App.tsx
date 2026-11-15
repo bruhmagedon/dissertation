@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import {
   createExperiment,
-  formatEntry,
-  formatValue,
+  compareOperations,
+  formatEntry as formatExportEntry,
   runScenario,
-  selectionModes,
-  sales,
   snapshotFromJournal,
 } from "../experiment.ts";
 import type { Operation, Snapshot, SelectionMode } from "../experiment.ts";
 import { Graph } from "./Graph.tsx";
+import { formatDisplayEntry as formatEntry, formatDisplayValue as formatValue } from "./formatForDisplay.ts";
 import { Hypotheses } from "./Hypotheses.tsx";
 import { CompareRuns } from "./CompareRuns.tsx";
 import type { SavedRun } from "./CompareRuns.tsx";
@@ -56,7 +55,7 @@ function Journal({
       : null;
 
   function exportJournal() {
-    const text = snapshot.log.map(formatEntry).join("\n") + "\n";
+    const text = snapshot.log.map(formatExportEntry).join("\n") + "\n";
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
@@ -211,20 +210,19 @@ export function App() {
   const [graphMode, setGraphMode] = useState<"dependencies" | "reading">("dependencies");
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [comparisonSize, setComparisonSize] = useState("4");
   const [comparisonRuns, setComparisonRuns] = useState<SavedRun[]>([]);
   const comparisonExperiments = useRef(new Map<SelectionMode, ReturnType<typeof createExperiment>>());
 
+  function launchComparison(count: number) {
+    const operations = snapshot.log.filter((event): event is Operation => event.type === "write" || event.type === "read");
+    const runs = compareOperations(operations, count);
+    comparisonExperiments.current.clear();
+    for (const run of runs) comparisonExperiments.current.set(run.mode, run.experiment);
+    setComparisonRuns(runs.map(({ mode, snapshot }) => ({ mode, snapshot })));
+  }
+
   function openComparison(open: boolean) {
-    if (open) {
-      const operations = snapshot.log.filter((event): event is Operation => event.type === "write" || event.type === "read");
-      const runs = selectionModes.map(({ id }) => {
-        const next = createExperiment(id);
-        for (const operation of operations) next.execute(operation);
-        comparisonExperiments.current.set(id, next);
-        return { mode: id, snapshot: next.snapshot() };
-      });
-      setComparisonRuns(runs);
-    }
     setComparisonOpen(open);
   }
 
@@ -319,8 +317,8 @@ export function App() {
             }}
           >
             <Hint text="В выборку входят продажи, которые больше или равны порогу">
-              <div className="sales-compact" tabIndex={0} aria-label={`Продажи: ${sales.join(", ")}`}>
-                <span>Продажи</span> {sales.join(" · ")}
+              <div className="sales-compact" tabIndex={0} aria-label={`${snapshot.salesCount} продаж: ${snapshot.salesPreview.join(", ")}`}>
+                <span>Продажи</span> {snapshot.salesCount <= 5 ? snapshot.salesPreview.join(" · ") : `${snapshot.salesCount.toLocaleString("ru-RU")} строк`}
               </div>
             </Hint>
             <form
@@ -384,7 +382,7 @@ export function App() {
                 setSelectionMode(mode);
                 start(undefined, mode);
               }} />
-              <CompareRuns open={comparisonOpen} onOpenChange={openComparison} runs={comparisonRuns} onSelect={inspectComparison} />
+              <CompareRuns open={comparisonOpen} onOpenChange={openComparison} runs={comparisonRuns} onSelect={inspectComparison} sizeDraft={comparisonSize} onSizeChange={setComparisonSize} onRun={launchComparison} operations={snapshot.log.filter((event): event is Operation => event.type === "write" || event.type === "read")} />
               <span>{selectionMode === "normal" ? "Обычная выборка" : "Переиспользование массива"}</span>
             </div>
             <div className={`snapshot-status ${stale ? "stale" : ""}`} role="status">

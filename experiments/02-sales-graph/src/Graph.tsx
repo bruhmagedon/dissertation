@@ -19,7 +19,7 @@ import type { Edge, EdgeProps, Node, NodeProps, Viewport } from "@xyflow/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/ui/tooltip";
-import { formatValue } from "../experiment.ts";
+import { formatDisplayValue as formatValue } from "./formatForDisplay.ts";
 import type { ComputedNode, NodeId, Snapshot, Value } from "../experiment.ts";
 import {
   computationCount,

@@ -2,10 +2,11 @@ import { computed, signal } from "@preact/signals-core";
 
 export type ComputedNode = "filtered" | "sum" | "count" | "average";
 export type NodeId = ComputedNode | "threshold";
-export type Value = number | number[] | null;
+export type SelectionPreview = { kind: "selection"; length: number; examples: number[] };
+export type Value = number | number[] | SelectionPreview | null;
 export type Operation = { type: "read" } | { type: "write"; value: number };
 export type LogEntry =
-  | { type: "reset"; value: number }
+  | { type: "reset"; value: number; salesCount?: number; salesPreview?: number[] }
   | Operation
   | {
       type: "read-start";
@@ -20,6 +21,24 @@ export type LogEntry =
   | { type: "result"; value: number | null };
 
 export const sales = [10, 20, 30, 40] as const;
+
+export function generateSales(count: number): number[] {
+  if (!Number.isInteger(count) || count < 2 || count > 100_000) {
+    throw new RangeError("Количество продаж должно быть целым числом от 2 до 100 000.");
+  }
+  if (count === 4) return [...sales];
+  return Array.from({ length: count }, (_, index) => index === 0 ? 10 : index + 11);
+}
+
+function journalValue(value: Value): Value {
+  return Array.isArray(value) && value.length > 8
+    ? { kind: "selection", length: value.length, examples: value.slice(0, 5) }
+    : value;
+}
+
+export function selectionSize(value: Value | undefined): number | undefined {
+  return Array.isArray(value) ? value.length : value && typeof value === "object" ? value.length : undefined;
+}
 
 export const selectionModes = [
   { id: "normal", label: "Обычная выборка", description: "Каждый вызов filter возвращает новый массив." },
@@ -53,9 +72,15 @@ export function snapshotFromJournal(journal: readonly LogEntry[]) {
   const readings: (number | null)[] = [];
   let threshold = 10;
   let evaluatedThreshold: number | null = null;
+  let salesCount: number = sales.length;
+  let salesPreview: number[] = [...sales];
   for (const event of log) {
     switch (event.type) {
       case "reset":
+        salesCount = event.salesCount ?? sales.length;
+        salesPreview = event.salesPreview ?? [...sales];
+        threshold = event.value;
+        break;
       case "write":
         threshold = event.value;
         break;
@@ -69,16 +94,16 @@ export function snapshotFromJournal(journal: readonly LogEntry[]) {
         break;
     }
   }
-  return { threshold, evaluatedThreshold, calls, values, readings, log };
+  return { threshold, evaluatedThreshold, calls, values, readings, log, salesCount, salesPreview };
 }
 export type Snapshot = ReturnType<typeof snapshotFromJournal>;
 
-export function createExperiment(mode: SelectionMode = "normal") {
+export function createExperiment(mode: SelectionMode = "normal", inputSales: readonly number[] = sales) {
   let previousSelection: number[] | undefined;
   const threshold = signal(10);
   const calls = { filtered: 0, sum: 0, count: 0, average: 0 };
 
-  const journal: LogEntry[] = [{ type: "reset", value: 10 }];
+  const journal: LogEntry[] = [{ type: "reset", value: 10, salesCount: inputSales.length, salesPreview: inputSales.slice(0, 5) }];
 
   let nextRequestId = 1;
   let activeRequestId: number | null = null;
@@ -94,7 +119,7 @@ export function createExperiment(mode: SelectionMode = "normal") {
     activeRequestId = id;
     try {
       const value = read();
-      journal.push({ type: "read-end", id, value });
+      journal.push({ type: "read-end", id, value: journalValue(value) });
       return value;
     } finally {
       activeRequestId = parentId;
@@ -105,14 +130,14 @@ export function createExperiment(mode: SelectionMode = "normal") {
   }
 
   function recorded<T extends Value>(node: ComputedNode, value: T): T {
-    journal.push({ type: "value", node, value, call: calls[node], requestId: activeRequestId });
+    journal.push({ type: "value", node, value: journalValue(value), call: calls[node], requestId: activeRequestId });
     return value;
   }
 
   const filtered = computed(() => {
     called("filtered");
     const minimum = readValue("filtered", "threshold", () => threshold.value);
-    const next = sales.filter((sale) => sale >= minimum);
+    const next = inputSales.filter((sale) => sale >= minimum);
     if (mode === "reuse-array" && previousSelection &&
       next.length === previousSelection.length &&
       next.every((sale, index) => sale === previousSelection![index])) {
@@ -167,15 +192,26 @@ export function runScenario(name: keyof typeof scenarios, mode: SelectionMode = 
   return experiment;
 }
 
+export function compareOperations(operations: readonly Operation[], salesCount: number) {
+  const data = generateSales(salesCount);
+  return selectionModes.map(({ id }) => {
+    const experiment = createExperiment(id, data);
+    for (const operation of operations) experiment.execute(operation);
+    return { mode: id, experiment, snapshot: experiment.snapshot() };
+  });
+}
+
 export function formatValue(value: Value | undefined): string {
   if (value === undefined) return "Не вычислено";
   if (value === null) return "Нет продаж";
-  return Array.isArray(value) ? `[${value.join(", ")}]` : String(value);
+  if (Array.isArray(value)) return `[${value.join(", ")}]`;
+  if (typeof value === "object") return `${value.length.toLocaleString("ru-RU")} строк · [${value.examples.join(", ")}, …]`;
+  return String(value);
 }
 export function formatEntry(event: LogEntry): string {
   switch (event.type) {
     case "reset":
-      return `Новый граф, порог = ${event.value}`;
+      return `Новый граф, порог = ${event.value} · ${(event.salesCount ?? 4).toLocaleString("ru-RU")} продаж`;
     case "write":
       return `Операция: записать порог = ${event.value}`;
     case "read":
