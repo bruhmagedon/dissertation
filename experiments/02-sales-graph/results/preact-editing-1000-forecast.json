@@ -1,0 +1,856 @@
+{
+  "recording": {
+    "schema": 1,
+    "name": "Редактирование карточек · запись 1",
+    "profile": "editing",
+    "data": {
+      "kind": "generated",
+      "size": 1000,
+      "seed": 42
+    },
+    "initial": {
+      "query": "",
+      "department": "",
+      "sort": "name",
+      "page": 0,
+      "pageSize": 20,
+      "summary": false
+    },
+    "steps": [
+      {
+        "action": {
+          "type": "phone",
+          "id": 309,
+          "phone": "+7 901 0000001"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 309,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 107,
+          "phone": "+7 901 0000002"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 107,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 573,
+          "phone": "+7 901 0000003"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 573,
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 2
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 957,
+          "phone": "+7 901 0000004"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 957,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 3
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 742,
+          "phone": "+7 901 0000005"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 742,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 4
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 405,
+          "phone": "+7 901 0000006"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 405,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 5
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 181,
+          "phone": "+7 901 0000007"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 181,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 6
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 383,
+          "phone": "+7 901 0000008"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 383,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 7
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      }
+    ]
+  },
+  "engine": "preact",
+  "version": "1.14.5",
+  "created": "2026-11-21T10:15:57.424Z",
+  "threshold": 0.05,
+  "repetitions": 24,
+  "profilingMs": 114.32659999999998,
+  "calibrationMs": 322.377657,
+  "estimates": [
+    {
+      "policy": "filtered",
+      "score": 12.730012020833339,
+      "matches": 8,
+      "checks": 8,
+      "descendants": 5,
+      "actions": [
+        {
+          "action": 0,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 1,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.0007076979166669162,
+          "savedMs": 1.509036666666669
+        },
+        {
+          "action": 2,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 3,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 4,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.0006734062500003782,
+          "savedMs": 1.4770995416666655
+        },
+        {
+          "action": 5,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 6,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 7,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.00316856250000086,
+          "savedMs": 1.5402421250000013
+        },
+        {
+          "action": 8,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 9,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 10,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.0006598958333334792,
+          "savedMs": 1.5639070833333288
+        },
+        {
+          "action": 11,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 12,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 13,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.001309406249999275,
+          "savedMs": 1.6371465833333332
+        },
+        {
+          "action": 14,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 15,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 16,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.001439302083333871,
+          "savedMs": 1.6732655833333328
+        },
+        {
+          "action": 17,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 18,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 19,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.0006744479166667835,
+          "savedMs": 1.6669554583333386
+        },
+        {
+          "action": 20,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 21,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 22,
+          "equal": true,
+          "omitted": [
+            "sorted",
+            "pagination",
+            "pageIds"
+          ],
+          "compareMs": 0.0006484687500005748,
+          "savedMs": 1.671640166666672
+        },
+        {
+          "action": 23,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        }
+      ]
+    },
+    {
+      "policy": "pageIds",
+      "score": -0.0006599062499989353,
+      "matches": 8,
+      "checks": 15,
+      "descendants": 1,
+      "actions": [
+        {
+          "action": 0,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 1,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.00006235416666674116,
+          "savedMs": 0
+        },
+        {
+          "action": 2,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 3,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 4,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.00005195833333360156,
+          "savedMs": 0
+        },
+        {
+          "action": 5,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.000049885416666247316,
+          "savedMs": 0
+        },
+        {
+          "action": 6,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 7,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.00006858333333426003,
+          "savedMs": 0
+        },
+        {
+          "action": 8,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.000054041666666411935,
+          "savedMs": 0
+        },
+        {
+          "action": 9,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 10,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.0000394895833331077,
+          "savedMs": 0
+        },
+        {
+          "action": 11,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.00002597916666620866,
+          "savedMs": 0
+        },
+        {
+          "action": 12,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 13,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.00006443749999955155,
+          "savedMs": 0
+        },
+        {
+          "action": 14,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.00004053124999951289,
+          "savedMs": 0
+        },
+        {
+          "action": 15,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 16,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.00007274999999988078,
+          "savedMs": 0
+        },
+        {
+          "action": 17,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.00004157291666710231,
+          "savedMs": 0
+        },
+        {
+          "action": 18,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 19,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.000029093749999968093,
+          "savedMs": 0
+        },
+        {
+          "action": 20,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.00001455208333330423,
+          "savedMs": 0
+        },
+        {
+          "action": 21,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 22,
+          "equal": true,
+          "omitted": [],
+          "compareMs": 0.000029093749999968093,
+          "savedMs": 0
+        },
+        {
+          "action": 23,
+          "equal": false,
+          "omitted": [],
+          "compareMs": 0.00001558333333306905,
+          "savedMs": 0
+        }
+      ]
+    },
+    {
+      "policy": "summary",
+      "score": 0,
+      "matches": 0,
+      "checks": 0,
+      "descendants": 0,
+      "actions": [
+        {
+          "action": 0,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 1,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 2,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 3,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 4,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 5,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 6,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 7,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 8,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 9,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 10,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 11,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 12,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 13,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 14,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 15,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 16,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 17,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 18,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 19,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 20,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 21,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 22,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        },
+        {
+          "action": 23,
+          "equal": null,
+          "omitted": [],
+          "compareMs": 0,
+          "savedMs": 0
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "baseline": "baseline",
+    "frequency": "filtered",
+    "descendants": "filtered",
+    "model": "filtered"
+  }
+}

@@ -15,5 +15,5 @@
     "verbatimModuleSyntax": true,
     "types": ["node", "vite-plus/client"]
   },
-  "include": ["experiment.ts", "trace.ts", "script.ts", "src", "tests", "*.config.ts"]
+  "include": ["experiment.ts", "trace.ts", "script.ts", "research-cli.ts", "employees", "src", "tests", "*.config.ts"]
 }

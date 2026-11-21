@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { formatEntry, formatValue, scenarios } from "../../experiment.ts";
 import type { Snapshot } from "../../experiment.ts";
-import { computationCount, operationTraces } from "../../trace.ts";
+import { computationCount, operationSteps, operationTraces } from "../../trace.ts";
 
 // Запускаем настоящий консольный entrypoint отдельным процессом.
 const consoleResults = JSON.parse(
@@ -18,11 +18,11 @@ async function expectSnapshot(page: Page, expected: Snapshot) {
   for (const [node, count] of Object.entries(expected.calls)) {
     await expect(page.getByTestId(`total-${node}`)).toHaveText(String(count));
     await expect(page.getByTestId(`calls-${node}`)).toHaveText(
-      `${computationCount(count)} с начала прогона`,
+      new RegExp(`^×${count} всего`),
     );
   }
   const journal = page.getByTestId("journal");
-  await expect(journal.locator(".log-entry > span:last-child")).toHaveText(
+  await expect(journal.locator(".journal-event-text")).toHaveText(
     expected.log.map(formatEntry),
   );
 }
@@ -51,7 +51,7 @@ for (const name of ["A", "B"] as const) {
   }) => {
     await page.goto("/");
     for (let run = 0; run < 2; run++) {
-      await page.getByRole("button", { name: `Запустить ${name}` }).click();
+      await page.getByRole("button", { name: `Запустить сценарий ${name}` }).click();
       await expectSnapshot(page, consoleResults[name]);
     }
   });
@@ -70,7 +70,7 @@ test("панорамирование, масштаб, просмотр и экс
   const log = await page.getByTestId("journal").locator(".log-entry").allTextContents();
   const exportedEntries = await page
     .getByTestId("journal")
-    .locator(".log-entry > span:last-child")
+    .locator(".journal-event-text")
     .allTextContents();
   const viewport = page.locator(".react-flow__viewport");
   const transform = await viewport.getAttribute("style");
@@ -130,7 +130,7 @@ test("снимки интерфейса и отсутствие ошибок б�
   page.on("pageerror", (error) => errors.push(error.message));
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Запустить A" }).click();
+  await page.getByRole("button", { name: "Запустить сценарий A" }).click();
   await expect(page.locator(".react-flow__node")).toHaveCount(5);
   await expect(page.locator(".react-flow__edge")).toHaveCount(5);
   await expect(page.locator(".react-flow__nodes")).toBeVisible();
@@ -155,7 +155,7 @@ test("первое чтение: шесть карточек, две выбор�
   await page.getByRole("button", { name: "Порядок чтения", exact: true }).click();
   await expect(page.getByTestId("operation-summary")).toContainText("чтение среднего = 25");
   await expect(page.getByTestId("summary-filtered")).toContainText(
-    "2 обращения · 1 вычисление за операцию · 1 вычисление с начала прогона",
+    "2 записанных чтения · 1 вычисление за операцию · 1 вычисление с начала прогона",
   );
   const cards = page.getByTestId("request-card");
   await expect(cards).toHaveCount(6);
@@ -209,51 +209,44 @@ test("первое чтение: шесть карточек, две выбор�
       ),
   );
   const initialViewport = await page.locator(".react-flow__viewport").getAttribute("style");
-  for (let step = 0; step < 6; step++) {
+  const trace = operationTraces(consoleResults.A.log)[0];
+  const steps = operationSteps(consoleResults.A.log, trace);
+  const filteredEnd = trace.timeline[2].end;
+  for (let step = 0; step < steps.length; step++) {
     await page.getByRole("button", { name: "Вперёд", exact: true }).click();
-    await expect(page.locator(".react-flow__node:visible")).toHaveCount(step + 1);
+    const visible = trace.timeline.filter(({ start }) => start <= steps[step].start).length;
+    await expect(page.locator(".react-flow__node:visible")).toHaveCount(visible);
     await expect(page.getByTestId("total-filtered")).toHaveText("1");
     await expect(page.locator(".react-flow__viewport")).toHaveAttribute("style", initialViewport!);
-    for (let index = 0; index <= step; index++) {
-      await expect
-        .poll(() =>
-          page
-            .locator(`.react-flow__node[data-id="${index + 1}"]`)
-            .evaluate((element) => element.style.transform),
-        )
-        .toBe(coordinates[index]);
+    for (let index = 0; index < visible; index++) {
+      await expect.poll(() => page.locator(`.react-flow__node[data-id="${index + 1}"]`)
+        .evaluate((element) => element.style.transform)).toBe(coordinates[index]);
     }
-    if (step === 2) {
-      await expect(page.locator('.react-flow__node[data-id="3"] .request-card-result')).toHaveText(
-        "Ожидает завершения",
-      );
-      await expect(page.locator('.react-flow__node[data-id="3"]')).not.toContainText(
-        "+1 вычисление",
-      );
-      await expect(page.getByTestId("summary-filtered")).toContainText("0 вычислений за операцию");
+    if (visible >= 3) {
+      const filterCard = page.locator('.react-flow__node[data-id="3"]');
+      if (steps[step].start < filteredEnd) {
+        await expect(filterCard.locator(".request-card-result")).toHaveText("Ожидает завершения");
+        await expect(page.getByTestId("summary-filtered")).toContainText("0 вычислений за операцию");
+      } else {
+        await expect(filterCard).toContainText("+1 вычисление");
+        await expect(page.getByTestId("summary-filtered")).toContainText("1 вычисление за операцию");
+      }
     }
     if (step === 0) {
       await expect(page.getByTestId("operation-summary")).not.toContainText("= 25");
       await expect(page.getByTestId("operation-summary")).toContainText("Вычислений: 0");
-      await expect(page.locator('.react-flow__node[data-id="1"]')).not.toContainText(
-        "+1 вычисление",
-      );
-    }
-    if (step === 3) {
-      await expect(page.locator('.react-flow__node[data-id="3"]')).toContainText("+1 вычисление");
-      await expect(page.getByTestId("summary-filtered")).toContainText("1 вычисление за операцию");
     }
   }
   await expect(page.locator('.react-flow__node[data-id="6"]')).toContainText("+0 вычислений");
   await expect(page.getByRole("button", { name: "Вперёд", exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Назад", exact: true }).click();
-  await expect(page.getByTestId("reading-step")).toHaveText("Шаг 5 из 6");
+  await expect(page.getByTestId("reading-step")).toHaveAttribute("aria-label", `Шаг ${steps.length - 1} из ${steps.length}`);
   await page
     .getByTestId("journal")
     .getByRole("button", { name: /Операция: прочитать среднее/ })
     .first()
     .click();
-  await expect(page.getByTestId("reading-step")).toHaveText("Операция целиком");
+  await expect(page.getByTestId("reading-step")).toHaveAttribute("aria-label", "Операция целиком");
   await page.getByLabel("Новый порог", { exact: true }).fill("20");
   await page.getByRole("button", { name: "Записать", exact: true }).click();
   await expect(page.getByTestId("operation-summary")).toContainText("запись порога = 20");
@@ -266,7 +259,7 @@ test("первое чтение: шесть карточек, две выбор�
 for (const name of ["A", "B"] as const) {
   test(`история ${name}: проверки и обращения не меняют прогон`, async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: `Запустить ${name}` }).click();
+    await page.getByRole("button", { name: `Запустить сценарий ${name}` }).click();
     await page.getByRole("button", { name: "Порядок чтения", exact: true }).click();
     await expect(page.getByTestId("operation-summary")).toContainText("чтение среднего = 35");
     await expect(page.getByTestId("operation-summary")).toContainText("Вычислений: 0");
@@ -284,7 +277,7 @@ for (const name of ["A", "B"] as const) {
     const thresholds = name === "A" ? [10, 20, 30] : [10, 30];
     for (let index = 0; index < thresholds.length; index++) {
       await reads.nth(index).click();
-      await expect(page.getByTestId("reading-step")).toHaveText("Операция целиком");
+      await expect(page.getByTestId("reading-step")).toHaveAttribute("aria-label", "Операция целиком");
       const threshold = page.locator('[data-testid="request-card"][data-node="threshold"]');
       await expect(threshold).toContainText(String(thresholds[index]));
       await expect(page.getByTestId("summary-filtered")).toContainText(
@@ -318,9 +311,9 @@ for (const name of ["A", "B"] as const) {
     if (!bounds) throw new Error("Холст не найден");
     const viewport = page.locator(".react-flow__viewport");
     const transform = await viewport.getAttribute("style");
-    await page.mouse.move(bounds.x + 30, bounds.y + 180);
+    await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + 20);
     await page.mouse.down();
-    await page.mouse.move(bounds.x + 80, bounds.y + 220, { steps: 6 });
+    await page.mouse.move(bounds.x + bounds.width / 2 + 50, bounds.y + 60, { steps: 6 });
     await page.mouse.up();
     await expect(viewport).not.toHaveAttribute("style", transform!);
     await page.getByRole("button", { name: "Зависимости", exact: true }).click();

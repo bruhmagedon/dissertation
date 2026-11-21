@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { MutableRefObject } from "react";
 import { ChevronDown, ChevronUp, Crosshair, ListTree, Network, Rows3 } from "lucide-react";
 import {
@@ -14,6 +14,7 @@ import {
   Position,
   ReactFlow,
   useReactFlow,
+  useStore,
 } from "@xyflow/react";
 import type { Edge, EdgeProps, Node, NodeProps, Viewport } from "@xyflow/react";
 import { Badge } from "@/components/ui/badge";
@@ -199,7 +200,22 @@ function CenterGraphButton() {
   );
 }
 
-function FlowCanvas({
+function FitOnResize({ padding }: { padding: number }) {
+  const flow = useReactFlow();
+  const width = useStore((state) => state.width);
+  const previous = useRef(0);
+  useEffect(() => {
+    if (!width || width === previous.current) return;
+    const changed = previous.current > 0;
+    previous.current = width;
+    if (!changed) return;
+    const frame = requestAnimationFrame(() => { void flow.fitView({ padding }); });
+    return () => cancelAnimationFrame(frame);
+  }, [width, flow, padding]);
+  return null;
+}
+
+export function FlowCanvas({
   nodes,
   edges,
   reading = false,
@@ -209,7 +225,7 @@ function FlowCanvas({
 }: {
   theme: "light" | "dark";
   viewport: MutableRefObject<Viewport | null>;
-  nodes: (GraphNode | TreeNode)[];
+  nodes: Node[];
   edges: Edge[];
   reading?: boolean;
   controls?: React.ReactNode;
@@ -241,6 +257,7 @@ function FlowCanvas({
           "controls.fitView.ariaLabel": "Вместить граф",
         }}
       >
+        <FitOnResize padding={reading ? 0.12 : 0.18} />
         <Background variant={BackgroundVariant.Dots} color="color-mix(in oklch, var(--muted-foreground) 45%, var(--muted))" gap={22} size={1.5} />
         <Controls showInteractive={false}>
           <CenterGraphButton />

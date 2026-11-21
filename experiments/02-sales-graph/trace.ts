@@ -149,9 +149,11 @@ export function operationSteps(log: readonly LogEntry[], trace: OperationTrace):
   ].sort((a, b) => a.start - b.start);
 }
 
-// A frame includes events only through the currently highlighted journal entry.
-export function traceFrame(log: readonly LogEntry[], trace: OperationTrace, step: number | null, steps: { start: number }[] = trace.timeline) {
-  const end = step === null ? trace.end : (steps[step]?.start ?? trace.start) + 1;
+// A request frame spans the events until the next request. An explicit event selection stops at that event.
+export function traceFrame(log: readonly LogEntry[], trace: OperationTrace, step: number | null, steps?: { start: number }[]) {
+  const end = step === null ? trace.end : steps
+    ? (steps[step]?.start ?? trace.start) + 1
+    : trace.timeline[step + 1]?.start ?? trace.end;
   const snapshot = snapshotFromJournal(log.slice(0, end));
   const delta = {
     filtered: snapshot.calls.filtered - trace.before.calls.filtered,

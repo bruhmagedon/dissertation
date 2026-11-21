@@ -1,0 +1,554 @@
+{
+  "schema": 1,
+  "protocol": "employees-1",
+  "unit": "ms/recording",
+  "created": "2026-11-21T10:14:45.471Z",
+  "recording": {
+    "schema": 1,
+    "name": "Редактирование карточек · запись 1",
+    "profile": "editing",
+    "data": {
+      "kind": "generated",
+      "size": 1000,
+      "seed": 42
+    },
+    "initial": {
+      "query": "",
+      "department": "",
+      "sort": "name",
+      "page": 0,
+      "pageSize": 20,
+      "summary": false
+    },
+    "steps": [
+      {
+        "action": {
+          "type": "phone",
+          "id": 309,
+          "phone": "+7 901 0000001"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 309,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 107,
+          "phone": "+7 901 0000002"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 107,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 573,
+          "phone": "+7 901 0000003"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 573,
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 2
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 957,
+          "phone": "+7 901 0000004"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 957,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 3
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 742,
+          "phone": "+7 901 0000005"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 742,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 4
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 405,
+          "phone": "+7 901 0000006"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 405,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 5
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 181,
+          "phone": "+7 901 0000007"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 181,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 6
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 383,
+          "phone": "+7 901 0000008"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 383,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 7
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      }
+    ]
+  },
+  "engine": "preact",
+  "version": "1.14.5",
+  "environment": {
+    "runtime": "node",
+    "details": "v26.13.1 · 14.6.202.34-node.40 · linux · 6.18.58.1-microsoft-standard-WSL2 · x64 · AMD Ryzen 5 4600H with Radeon Graphics",
+    "build": "CLI TypeScript · d29b1a4a734f"
+  },
+  "parameters": {
+    "repeats": 5,
+    "warmup": 3,
+    "blocks": 4,
+    "seed": 144,
+    "threshold": 0.05
+  },
+  "status": "complete",
+  "wallMs": 2193.521965,
+  "diagnostics": {
+    "summary": {
+      "executions": 69,
+      "comparisons": 0,
+      "summaryReads": 0,
+      "membershipChanges": 0,
+      "orderChanges": 0,
+      "valid": true
+    },
+    "pageIds": {
+      "executions": 69,
+      "comparisons": 15,
+      "summaryReads": 0,
+      "membershipChanges": 0,
+      "orderChanges": 0,
+      "valid": true
+    },
+    "filtered": {
+      "executions": 45,
+      "comparisons": 8,
+      "summaryReads": 0,
+      "membershipChanges": 0,
+      "orderChanges": 0,
+      "valid": true
+    },
+    "baseline": {
+      "executions": 69,
+      "comparisons": 0,
+      "summaryReads": 0,
+      "membershipChanges": 0,
+      "orderChanges": 0,
+      "valid": true
+    }
+  },
+  "trials": [
+    {
+      "pair": 1,
+      "order": 1,
+      "policy": "filtered",
+      "timesMs": [
+        1.6842349999999442,
+        1.6786340000001019,
+        1.2860560000001442,
+        1.8082600000000184
+      ]
+    },
+    {
+      "pair": 1,
+      "order": 2,
+      "policy": "pageIds",
+      "timesMs": [
+        12.79424999999992,
+        13.852059999999938,
+        13.308451999999988,
+        13.370163999999932
+      ]
+    },
+    {
+      "pair": 1,
+      "order": 3,
+      "policy": "baseline",
+      "timesMs": [
+        14.168022999999948,
+        13.04149899999993,
+        13.057702000000063,
+        14.116612999999916
+      ]
+    },
+    {
+      "pair": 1,
+      "order": 4,
+      "policy": "summary",
+      "timesMs": [
+        13.801950999999917,
+        16.306449000000157,
+        16.701328000000103,
+        13.419973999999911
+      ]
+    },
+    {
+      "pair": 2,
+      "order": 1,
+      "policy": "baseline",
+      "timesMs": [
+        13.644419000000198,
+        17.15311799999995,
+        16.30774899999983,
+        13.561402999999927
+      ]
+    },
+    {
+      "pair": 2,
+      "order": 2,
+      "policy": "summary",
+      "timesMs": [
+        13.780946000000085,
+        12.465283,
+        13.155522000000019,
+        16.223833000000013
+      ]
+    },
+    {
+      "pair": 2,
+      "order": 3,
+      "policy": "pageIds",
+      "timesMs": [
+        12.408873000000085,
+        13.062003000000004,
+        12.521994999999833,
+        14.278345000000172
+      ]
+    },
+    {
+      "pair": 2,
+      "order": 4,
+      "policy": "filtered",
+      "timesMs": [
+        2.0269040000000587,
+        0.9313850000000912,
+        0.9274849999999333,
+        2.238845999999967
+      ]
+    },
+    {
+      "pair": 3,
+      "order": 1,
+      "policy": "baseline",
+      "timesMs": [
+        13.709242000000131,
+        13.60368799999992,
+        13.427052000000003,
+        13.638194999999996
+      ]
+    },
+    {
+      "pair": 3,
+      "order": 2,
+      "policy": "filtered",
+      "timesMs": [
+        0.8826810000000478,
+        0.8972839999998996,
+        0.9044859999999062,
+        1.5739220000000387
+      ]
+    },
+    {
+      "pair": 3,
+      "order": 3,
+      "policy": "summary",
+      "timesMs": [
+        16.07129400000008,
+        16.605703000000176,
+        19.386573,
+        20.926488999999947
+      ]
+    },
+    {
+      "pair": 3,
+      "order": 4,
+      "policy": "pageIds",
+      "timesMs": [
+        18.779048999999986,
+        20.176834999999983,
+        16.241828999999825,
+        17.38106199999993
+      ]
+    },
+    {
+      "pair": 4,
+      "order": 1,
+      "policy": "pageIds",
+      "timesMs": [
+        18.370164999999815,
+        13.586885000000166,
+        13.58758499999999,
+        13.473860999999943
+      ]
+    },
+    {
+      "pair": 4,
+      "order": 2,
+      "policy": "baseline",
+      "timesMs": [
+        12.91124600000012,
+        12.96895799999993,
+        13.738415000000032,
+        13.595885999999837
+      ]
+    },
+    {
+      "pair": 4,
+      "order": 3,
+      "policy": "summary",
+      "timesMs": [
+        12.575578000000178,
+        12.658793999999943,
+        12.420145999999932,
+        13.53437299999996
+      ]
+    },
+    {
+      "pair": 4,
+      "order": 4,
+      "policy": "filtered",
+      "timesMs": [
+        0.8967840000000251,
+        0.9332919999997102,
+        0.9006839999997283,
+        2.1864480000003823
+      ]
+    },
+    {
+      "pair": 5,
+      "order": 1,
+      "policy": "baseline",
+      "timesMs": [
+        13.803629,
+        12.4143439999998,
+        13.529573000000255,
+        13.616191000000072
+      ]
+    },
+    {
+      "pair": 5,
+      "order": 2,
+      "policy": "filtered",
+      "timesMs": [
+        0.9383920000000217,
+        0.9828019999999924,
+        0.8900829999997768,
+        2.1424400000000787
+      ]
+    },
+    {
+      "pair": 5,
+      "order": 3,
+      "policy": "summary",
+      "timesMs": [
+        13.331131999999798,
+        13.884746000000177,
+        12.99276299999974,
+        13.79232699999966
+      ]
+    },
+    {
+      "pair": 5,
+      "order": 4,
+      "policy": "pageIds",
+      "timesMs": [
+        12.819027000000006,
+        12.695602000000235,
+        12.716005999999652,
+        13.302425999999741
+      ]
+    }
+  ]
+}

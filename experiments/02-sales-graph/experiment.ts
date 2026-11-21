@@ -168,19 +168,25 @@ export function createExperiment(mode: SelectionMode = "normal", inputSales: rea
     return recorded("average", size === 0 ? null : total / size);
   });
 
+  function perform(operation: Operation) {
+    if (operation.type === "write" && !Number.isFinite(operation.value)) {
+      throw new Error("Порог должен быть конечным числом.");
+    }
+    journal.push({ ...operation });
+    if (operation.type === "write") {
+      threshold.value = operation.value;
+      return;
+    }
+    const value = readValue("external", "average", () => average.value);
+    journal.push({ type: "result", value });
+    return value;
+  }
+
   return {
+    perform,
     snapshot: () => snapshotFromJournal(journal),
     execute(operation: Operation) {
-      if (operation.type === "write" && !Number.isFinite(operation.value)) {
-        throw new Error("Порог должен быть конечным числом.");
-      }
-      journal.push({ ...operation });
-      if (operation.type === "write") threshold.value = operation.value;
-      else
-        journal.push({
-          type: "result",
-          value: readValue("external", "average", () => average.value),
-        });
+      perform(operation);
       return snapshotFromJournal(journal);
     },
   };
@@ -188,15 +194,34 @@ export function createExperiment(mode: SelectionMode = "normal", inputSales: rea
 
 export function runScenario(name: keyof typeof scenarios, mode: SelectionMode = "normal") {
   const experiment = createExperiment(mode);
-  for (const operation of scenarios[name]) experiment.execute(operation);
+  for (const operation of scenarios[name]) experiment.perform(operation);
   return experiment;
 }
 
 export function compareOperations(operations: readonly Operation[], salesCount: number) {
   const data = generateSales(salesCount);
+  let minimum = 10;
+  const expected = operations.map((operation) => {
+    if (operation.type === "write") {
+      minimum = operation.value;
+      return;
+    }
+    let count = 0;
+    let sum = 0;
+    for (const sale of data) {
+      if (sale < minimum) continue;
+      sum += sale;
+      count++;
+    }
+    return count === 0 ? null : sum / count;
+  });
   return selectionModes.map(({ id }) => {
     const experiment = createExperiment(id, data);
-    for (const operation of operations) experiment.execute(operation);
+    operations.forEach((operation, index) => {
+      if (!Object.is(experiment.perform(operation), expected[index])) {
+        throw new Error("Продажи: расхождение с прямым расчётом на операции " + (index + 1));
+      }
+    });
     return { mode: id, experiment, snapshot: experiment.snapshot() };
   });
 }

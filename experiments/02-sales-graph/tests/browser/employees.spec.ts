@@ -1,0 +1,95 @@
+import { readFileSync } from "node:fs";
+import { expect, test } from "@playwright/test";
+import { parseRecording } from "../../employees/import.ts";
+import { parseSeries } from "../../employees/series.ts";
+
+for (const width of [1440, 390]) {
+  test("запись сотрудников, полотно и возврат на ширине " + width, async ({ page }) => {
+    await page.setViewportSize({ width, height: 950 });
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto("/#/employees");
+    await expect(page.getByRole("heading", { name: "Сотрудники", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Начать запись" }).click();
+    await page.getByRole("button", { name: "Открыть сводку" }).click();
+    await page.getByRole("button", { name: "Редактировать Анна #7" }).click();
+    await page.getByLabel("Телефон", { exact: true }).fill("+7 900 111-11-11");
+    await page.getByRole("button", { name: "Сохранить телефон" }).click();
+    await expect(page.getByRole("row", { name: /Анна/ })).toContainText("+7 900 111-11-11");
+    await page.getByRole("button", { name: "Редактировать Борис #9" }).click();
+    await page.getByLabel("Новый отдел").selectOption("Поддержка");
+    await page.getByRole("button", { name: "Сохранить отдел" }).click();
+    await page.getByLabel("Отдел", { exact: true }).selectOption("Поддержка");
+    await expect(page.getByRole("row", { name: /Вера/ })).toBeVisible();
+    await expect(page.getByRole("row", { name: /Анна/ })).toHaveCount(0);
+    await page.getByRole("button", { name: "Завершить и сохранить" }).click();
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Скачать запись JSON" }).click();
+    const file = await (await downloadPromise).path();
+    const recording = parseRecording(JSON.parse(readFileSync(file!, "utf8")));
+    expect(recording.steps.map(({ action }) => action.type)).toEqual(["summary", "phone", "department", "filter"]);
+    await page.getByRole("button", { name: "Открыть действие 4 на полотне" }).click();
+    await expect(page.getByRole("heading", { name: "Полотно сотрудников" })).toBeVisible();
+    await expect(page.getByText(/ID страницы \[9, 15\]/)).toBeVisible();
+    const count = await page.getByTestId("employee-counts").innerText();
+    await page.getByRole("button", { name: "Порядок чтения", exact: true }).click();
+    await page.getByRole("button", { name: "Вперёд", exact: true }).click();
+    await page.getByRole("button", { name: "Увеличить граф" }).click();
+    await page.getByRole("button", { name: /Включить .+ тему/ }).click();
+    await expect(page.getByTestId("employee-counts")).toHaveText(count);
+    await page.goBack();
+    await expect(page.getByRole("button", { name: "Открыть действие 4 на полотне" })).toBeVisible();
+    await page.getByLabel("Импорт записи", { exact: true }).setInputFiles(file!);
+    await expect(page.getByRole("row", { name: /Вера/ })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(errors).toEqual([]);
+    await page.screenshot({ path: "screenshots/employees-" + width + ".png", fullPage: true });
+    await page.getByRole("button", { name: "Открыть действие 4 на полотне" }).click();
+    await expect(page.getByText(/ID страницы \[9, 15\]/)).toBeVisible();
+    await page.reload();
+    await expect(page.getByText(/ID страницы \[9, 15\]/)).toBeVisible();
+  });
+}
+
+test("пилот, импорт, зафиксированный прогноз, проверка и отмена серии", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 940 });
+  await page.goto("/#/research");
+  await page.getByLabel("Движок").selectOption("reselect");
+  await page.getByRole("button", { name: "Запустить пилот" }).click();
+  await expect(page.getByRole("heading", { name: "Результаты серии" })).toBeVisible();
+  await expect(page.getByText("Завершена · Браузер")).toBeVisible();
+  await expect(page.getByRole("region", { name: "График парных разниц" })).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Скачать серию JSON" }).click();
+  const file = await (await downloadPromise).path();
+  const exported = parseSeries(JSON.parse(readFileSync(file!, "utf8")));
+  expect(exported.engine).toBe("reselect");
+  expect(exported.trials).toHaveLength(20);
+  await page.getByLabel("Импорт серии").setInputFiles(file!);
+  await expect(page.getByLabel("Показанная серия").locator("option")).toHaveCount(2);
+  await page.getByRole("button", { name: "На полотно · Отбор", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Базовая трасса" })).toBeVisible();
+  await page.getByRole("button", { name: "К исследованию" }).click();
+  await expect(page.getByText("Завершена · Браузер")).toBeVisible();
+  await page.getByRole("button", { name: "Получить прогноз" }).click();
+  await expect(page.getByRole("button", { name: "Проверить прогноз" })).toBeVisible();
+  await page.getByRole("button", { name: "Проверить прогноз" }).click();
+  await expect(page.getByRole("heading", { name: /Проверочная запись/ })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Цена выбора, мс" })).toBeVisible();
+  await page.getByRole("combobox", { name: "Сотрудников", exact: true }).selectOption("10000");
+  await page.getByRole("button", { name: "Расширенная серия" }).click();
+  await page.getByRole("button", { name: "Отменить серию" }).click();
+  await expect(page.getByText("Частичная · Браузер")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "screenshots/research-mobile.png", fullPage: true });
+});
+
+test("отчёт CLI открывается и показывает трассу выбранной политики", async ({ page }) => {
+  await page.goto("/#/research");
+  await page.getByLabel("Импорт серии").setInputFiles("results/preact-editing-1000-pilot.json");
+  await expect(page.getByText("Завершена · Node.js")).toBeVisible();
+  await expect(page.getByText(/CLI TypeScript/)).toHaveCount(1);
+  await page.getByRole("button", { name: "На полотно · Отбор", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Полотно сотрудников" })).toBeVisible();
+  await expect(page.getByText(/Пропущено: .*Сортировка/)).toBeVisible();
+});

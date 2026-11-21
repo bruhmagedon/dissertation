@@ -112,7 +112,7 @@ function Journal({
                   onClick={() => onSelect(index)}
                 >
                   <span className="event-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span>{formatEntry(event)}{(() => {
+                  <span><span className="journal-event-text">{formatEntry(event)}</span>{(() => {
                     const trace = tracesByStart.get(index);
                     if (!trace) return null;
                     const events = snapshot.log.slice(trace.start, trace.end);
@@ -184,21 +184,7 @@ function Journal({
   );
 }
 
-export function App() {
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    try {
-      const saved = localStorage.getItem("reactivity-theme");
-      if (saved === "light" || saved === "dark") return saved;
-    } catch {
-      // The theme still works for this session if storage is unavailable.
-    }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  });
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.style.colorScheme = theme;
-    try { localStorage.setItem("reactivity-theme", theme); } catch { /* Storage is optional. */ }
-  }, [theme]);
+export function SalesLab({ theme, setTheme }: { theme: "light" | "dark"; setTheme: (value: "light" | "dark") => void }) {
   const [selectionMode, setSelectionMode] = useState<SelectionMode>("normal");
   const [experiment, setExperiment] = useState(() => createExperiment());
   const [snapshot, setSnapshot] = useState(() => experiment.snapshot());
@@ -251,7 +237,7 @@ export function App() {
         'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="switch"], [role="slider"], [role="spinbutton"], [role="radiogroup"], [role="tablist"], [role="menu"], [role="dialog"], .journal-scroll, .snapshot-panel, .operation-summary',
       )) return;
       const section = document.getElementById(event.code === "KeyJ" ? "journal" : "graph");
-      if (!section) return;
+      if (!section || section.closest("[hidden]")) return;
       event.preventDefault();
       section.scrollIntoView();
     }
