@@ -1,8 +1,8 @@
 import { diagnose } from "./diagnose.ts";
 import { candidates, engineVersions, policies } from "./engine.ts";
-import type { Candidate, DependencyGraph, Engine, Evaluation, Node, NodeId, Policy } from "./engine.ts";
+import type { Candidate, DependencyGraph, Engine, Evaluation, GraphVariant, Node, NodeId, Policy } from "./engine.ts";
 import type { Recording } from "./recording.ts";
-import { paired, summarizeTrial } from "./series.ts";
+import { assessPair, summarizeTrial } from "./series.ts";
 import type { Series } from "./series.ts";
 
 export function omittedExecutions(evaluations: readonly Evaluation[], candidate: Candidate): Node[] {
@@ -64,6 +64,7 @@ type Rule = keyof typeof ruleLabels;
 export interface Forecast {
   recording: Recording;
   engine: Engine;
+  graph: GraphVariant;
   version: string;
   created: string;
   threshold: number;
@@ -74,10 +75,10 @@ export interface Forecast {
   rules: Record<Rule, Policy>;
 }
 
-export function predict(recording: Recording, engine: Engine, threshold: number): Forecast {
+export function predict(recording: Recording, engine: Engine, threshold: number, graph: GraphVariant = "A"): Forecast {
   if (!recording.steps.length) throw new Error("Для прогноза нужна запись с действиями.");
   const start = performance.now();
-  const diagnostic = diagnose(recording, engine, "baseline", { calibrate: true });
+  const diagnostic = diagnose(recording, engine, "baseline", { calibrate: true, graph });
   const profilingMs = performance.now() - start;
   if (!diagnostic.stats.valid) throw new Error(diagnostic.stats.error);
   const calibrationStarted = performance.now();
@@ -110,7 +111,7 @@ export function predict(recording: Recording, engine: Engine, threshold: number)
   const frequency = ranked((item) => item.checks ? item.matches / item.checks : 0);
   const model = ranked((item) => item.score);
   return {
-    recording, engine, version: engineVersions[engine], created: new Date().toISOString(),
+    recording, engine, graph, version: engineVersions[engine], created: new Date().toISOString(),
     threshold, repetitions, profilingMs, calibrationMs, estimates,
     rules: {
       baseline: "baseline",
@@ -122,26 +123,23 @@ export function predict(recording: Recording, engine: Engine, threshold: number)
 }
 
 export function validateForecast(forecast: Forecast, report: Series) {
+  if ((forecast.graph ?? "A") !== report.graph) throw new Error("Граф проверочной серии отличается от графа прогноза.");
   if (forecast.engine !== report.engine || forecast.version !== report.version ||
     forecast.threshold !== report.parameters.threshold ||
     JSON.stringify(forecast.recording.data) !== JSON.stringify(report.recording.data) ||
     JSON.stringify(forecast.recording.steps) === JSON.stringify(report.recording.steps)) {
     throw new Error("Для проверки нужна другая запись на том же наборе, движке и пороге.");
   }
-  const available = policies.filter((policy) => summarizeTrial(report, policy).count > 0);
-  if (!available.length) return;
-  const measured = [...available].sort((a, b) => summarizeTrial(report, a).median - summarizeTrial(report, b).median)[0];
-  const comparable = available.filter((policy) => !available.some((other) => {
-    if (other === policy) return false;
-    const { interval } = paired(report, policy, other);
-    return interval && interval[0] > forecast.threshold;
-  }));
+  const ranked = policies.map((policy) => ({ policy, ...summarizeTrial(report, policy) }))
+    .filter(({ count }) => count > 0)
+    .sort((a, b) => a.median - b.median);
+  const measured = ranked[0]?.policy;
+  const againstMinimum = measured && policies.map((policy) => ({ policy, ...assessPair(report, policy, measured) }));
   const rules = (Object.keys(ruleLabels) as Rule[]).map((rule) => {
     const policy = forecast.rules[rule];
-    const saving = paired(report, "baseline", policy);
-    // Используем парную цену выбора относительно минимальной наблюдавшейся медианы.
-    const cost = paired(report, policy, measured);
-    return { rule, policy, saving: saving.median, cost: cost.median, interval: cost.interval };
+    const saving = assessPair(report, "baseline", policy);
+    const cost = measured ? assessPair(report, policy, measured) : undefined;
+    return { rule, policy, saving, cost };
   });
-  return { measured, comparable, rules };
+  return { measured, againstMinimum, rules };
 }

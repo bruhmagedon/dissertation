@@ -1,5 +1,5 @@
 import { createEmployeeRun, firstMismatch } from "./engine.ts";
-import type { DependencyGraph, Engine, Frame, Policy } from "./engine.ts";
+import type { DependencyGraph, Engine, Frame, GraphVariant, Node, Policy } from "./engine.ts";
 import { createOracle, difference } from "./oracle.ts";
 import type { Recording } from "./recording.ts";
 
@@ -8,6 +8,7 @@ export interface DiagnosticStats {
   comparisons: number;
   summaryReads: number;
   membershipChanges: number;
+  byNode?: Partial<Record<Node, number>>;
   orderChanges: number;
   valid: boolean;
   error?: string;
@@ -16,12 +17,12 @@ export interface Diagnostic { graph: DependencyGraph; initial: Frame; frames: Fr
 
 export function diagnose(
   recording: Recording, engine: Engine, policy: Policy,
-  options: { retain?: boolean; calibrate?: boolean } = {},
+  options: { retain?: boolean; calibrate?: boolean; graph?: GraphVariant } = {},
 ): Diagnostic {
-  const run = createEmployeeRun(recording, engine, policy, options.calibrate ? "calibration" : "diagnostic");
+  const run = createEmployeeRun(recording, engine, policy, options.calibrate ? "calibration" : "diagnostic", options.graph);
   const oracle = createOracle(recording);
   const stats: DiagnosticStats = {
-    executions: 0, comparisons: 0, summaryReads: 0, membershipChanges: 0, orderChanges: 0, valid: true,
+    executions: 0, byNode: {}, comparisons: 0, summaryReads: 0, membershipChanges: 0, orderChanges: 0, valid: true,
   };
   const frames: Frame[] = [];
   let previous: number[] | undefined;
@@ -39,6 +40,10 @@ export function diagnose(
     }
     if (index > 0 && previous) {
       stats.executions += frame.evaluations.length;
+      for (const { node } of frame.evaluations) {
+        const byNode = stats.byNode!;
+        byNode[node] = (byNode[node] ?? 0) + 1;
+      }
       stats.comparisons += frame.events.filter((event) => event.kind === "compare").length;
       stats.summaryReads += Number(frame.step.outputs.includes("summary"));
       if (firstMismatch("filtered", previous, expected.orderedIds) !== expected.orderedIds.length) {

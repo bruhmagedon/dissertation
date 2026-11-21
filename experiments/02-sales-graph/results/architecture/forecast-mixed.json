@@ -1,0 +1,1439 @@
+{
+  "forecast": {
+    "recording": {
+      "schema": 1,
+      "name": "Поиск и страницы · запись 1",
+      "profile": "mixed",
+      "data": {
+        "kind": "generated",
+        "size": 1000,
+        "seed": 42
+      },
+      "initial": {
+        "query": "",
+        "department": "",
+        "sort": "name",
+        "page": 0,
+        "pageSize": 20,
+        "summary": false
+      },
+      "steps": [
+        {
+          "action": {
+            "type": "search",
+            "query": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 0
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": true
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 309,
+            "phone": "+7 901 0000001"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": "Вера"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 1
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": false
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 667,
+            "phone": "+7 901 0000002"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 2
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": false
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 957,
+            "phone": "+7 901 0000003"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": "Иван"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 0
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": true
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 543,
+            "phone": "+7 901 0000004"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 1
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": false
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 539,
+            "phone": "+7 901 0000005"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": "Олег"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 2
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": false
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 363,
+            "phone": "+7 901 0000006"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 0
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": true
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 45,
+            "phone": "+7 901 0000007"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "search",
+            "query": "Денис"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 1
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "summary",
+            "open": false
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 349,
+            "phone": "+7 901 0000008"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        }
+      ]
+    },
+    "engine": "preact",
+    "graph": "A",
+    "version": "1.14.5",
+    "created": "2026-11-21T11:19:00.383Z",
+    "threshold": 0.05,
+    "repetitions": 24,
+    "profilingMs": 87.450143,
+    "calibrationMs": 1.0332119999999918,
+    "estimates": [
+      {
+        "policy": "filtered",
+        "score": -0.0009344166666670852,
+        "matches": 0,
+        "checks": 7,
+        "descendants": 5,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000624645833333363,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005059374999986469,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0000660833333334665,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0000856979166667197,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00004543750000015242,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 24,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00003923958333344283,
+            "savedMs": 0
+          },
+          {
+            "action": 25,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 26,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 27,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 28,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00002271875000007621,
+            "savedMs": 0
+          },
+          {
+            "action": 29,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 30,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 31,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "pageIds",
+        "score": -0.0010996041666662866,
+        "matches": 0,
+        "checks": 12,
+        "descendants": 1,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00016830208333325677,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005575000000016909,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00046770833333316847,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005059375000016075,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00006402083333334474,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005162499999992557,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005472916666645252,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000042333333333329413,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000042333333333329413,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 24,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000042333333333329413,
+            "savedMs": 0
+          },
+          {
+            "action": 25,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 26,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 27,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 28,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000021677083333374963,
+            "savedMs": 0
+          },
+          {
+            "action": 29,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00003819791666644553,
+            "savedMs": 0
+          },
+          {
+            "action": 30,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 31,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "summary",
+        "score": -0.00033142708333322446,
+        "matches": 1,
+        "checks": 5,
+        "descendants": 0,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00007536458333342229,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00008054166666671136,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005988541666675692,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 24,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 25,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 26,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00008568749999978327,
+            "savedMs": 0
+          },
+          {
+            "action": 27,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 28,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00002994791666655061,
+            "savedMs": 0
+          },
+          {
+            "action": 29,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 30,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 31,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      }
+    ],
+    "rules": {
+      "baseline": "baseline",
+      "frequency": "summary",
+      "descendants": "filtered",
+      "model": "baseline"
+    }
+  },
+  "holdout": {
+    "schema": 1,
+    "name": "Поиск и страницы · запись 2",
+    "profile": "mixed",
+    "data": {
+      "kind": "generated",
+      "size": 1000,
+      "seed": 42
+    },
+    "initial": {
+      "query": "",
+      "department": "",
+      "sort": "name",
+      "page": 0,
+      "pageSize": 20,
+      "summary": false
+    },
+    "steps": [
+      {
+        "action": {
+          "type": "search",
+          "query": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": true
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 331,
+          "phone": "+7 901 0000101"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": "Олег"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": false
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 924,
+          "phone": "+7 901 0000102"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 2
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": false
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 205,
+          "phone": "+7 901 0000103"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": "Иван"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": true
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 133,
+          "phone": "+7 901 0000104"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": false
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 573,
+          "phone": "+7 901 0000105"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": "Анна"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 2
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": false
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 719,
+          "phone": "+7 901 0000106"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": true
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 536,
+          "phone": "+7 901 0000107"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "search",
+          "query": "Елена"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "summary",
+          "open": false
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 591,
+          "phone": "+7 901 0000108"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      }
+    ]
+  }
+}

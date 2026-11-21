@@ -1,0 +1,1151 @@
+{
+  "forecast": {
+    "recording": {
+      "schema": 1,
+      "name": "Анализ отделов · запись 1",
+      "profile": "departments",
+      "data": {
+        "kind": "generated",
+        "size": 1000,
+        "seed": 42
+      },
+      "initial": {
+        "query": "",
+        "department": "",
+        "sort": "name",
+        "page": 0,
+        "pageSize": 20,
+        "summary": true
+      },
+      "steps": [
+        {
+          "action": {
+            "type": "filter",
+            "department": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 309,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": "Продажи"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 958,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name-desc"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 548,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": "Операции"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 999,
+            "department": "Продажи"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name-desc"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 25,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": "Поддержка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 156,
+            "department": "Продажи"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name-desc"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": ""
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 120,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "filter",
+            "department": "Продажи"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 573,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        },
+        {
+          "action": {
+            "type": "sort",
+            "sort": "name-desc"
+          },
+          "outputs": [
+            "rows",
+            "pagination",
+            "summary"
+          ]
+        }
+      ]
+    },
+    "engine": "preact",
+    "graph": "A",
+    "version": "1.14.5",
+    "created": "2026-11-21T11:18:40.611Z",
+    "threshold": 0.05,
+    "repetitions": 24,
+    "profilingMs": 99.55191099999999,
+    "calibrationMs": 180.229292,
+    "estimates": [
+      {
+        "policy": "filtered",
+        "score": 7.104676052083336,
+        "matches": 4,
+        "checks": 15,
+        "descendants": 5,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0037395729166664893,
+            "savedMs": 1.4895195000000012
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00014479166666703236,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00014270833333362987,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00009479166666714889,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0014104166666667102,
+            "savedMs": 1.5583486250000007
+          },
+          {
+            "action": 8,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00005625000000009095,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666666435503,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000018750000000030315,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.002031249999999929,
+            "savedMs": 1.4318112083333339
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000013541666666820143,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0014062499999999052,
+            "savedMs": 2.634133166666667
+          },
+          {
+            "action": 20,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "pageIds",
+        "score": -0.0022708333333329262,
+        "matches": 4,
+        "checks": 22,
+        "descendants": 1,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.0001364583333334224,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0011249999999994504,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0003291666666663436,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00010833333333337691,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00009791666666636445,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00007083333333331628,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666666435503,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000027083333333640287,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00004270833333327081,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00002083333333284069,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000020833333333432808,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.0000447916666666733,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00001458333333381745,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000015625000000222638,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000033333333333255645,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000015625000000222638,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000018750000000030315,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.000046875000000075793,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00001770833333303301,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00003333333333384777,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000016666666666627823,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "summary",
+        "score": -0.0033645729166658835,
+        "matches": 0,
+        "checks": 15,
+        "descendants": 0,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.001535416666666715,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00013541666666642507,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.001371864583333604,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00008749999999994411,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00003958333333287101,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666666435503,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000027083333333640287,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0000187499999994382,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000018750000000030315,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000018750000000030315,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000013541666666820143,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000028125000000045475,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000014583333333225331,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000020833333333432808,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      }
+    ],
+    "rules": {
+      "baseline": "baseline",
+      "frequency": "filtered",
+      "descendants": "filtered",
+      "model": "filtered"
+    }
+  },
+  "holdout": {
+    "schema": 1,
+    "name": "Анализ отделов · запись 2",
+    "profile": "departments",
+    "data": {
+      "kind": "generated",
+      "size": 1000,
+      "seed": 42
+    },
+    "initial": {
+      "query": "",
+      "department": "",
+      "sort": "name",
+      "page": 0,
+      "pageSize": 20,
+      "summary": true
+    },
+    "steps": [
+      {
+        "action": {
+          "type": "filter",
+          "department": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 331,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 378,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name-desc"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 989,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 855,
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name-desc"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 34,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 522,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name-desc"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": ""
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 876,
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "filter",
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 247,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      },
+      {
+        "action": {
+          "type": "sort",
+          "sort": "name-desc"
+        },
+        "outputs": [
+          "rows",
+          "pagination",
+          "summary"
+        ]
+      }
+    ]
+  }
+}

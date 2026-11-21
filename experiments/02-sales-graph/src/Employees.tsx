@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { borisRecording } from "../employees/conditions.ts";
 import { createEmployeeRun } from "../employees/engine.ts";
 import type { Frame } from "../employees/engine.ts";
 import { parseRecording } from "../employees/import.ts";
 import { demoRecording, departments, describeAction, makeStep, preset, profileLabels, sizes } from "../employees/recording.ts";
 import type { Action, Department, Profile, Recording, Size, Sort } from "../employees/recording.ts";
+import { inspectArchitectures } from "./employee-inspection.ts";
 import type { Inspection } from "./employee-inspection.ts";
 import { downloadJson, persistRecording, savedRecording } from "./recording-files.ts";
 
@@ -128,6 +130,14 @@ export function Employees({ opening, onInspect, onResearch }: {
         {summary.length ? <dl>{summary.map(([department, count]) => <div key={department}><dt>{department}</dt><dd>{count}</dd></div>)}</dl> : <p>По текущему отбору нет сотрудников.</p>}
       </section>}
     </div>
+    <section className="lab-card">
+      <h2>Перевод Бориса</h2>
+      <p>В обоих примерах сводка открыта. Последнее действие переводит Бориса из «Продаж» в «Поддержку».</p>
+      <div className="lab-controls">
+        <Button variant="outline" disabled={status === "recording"} onClick={() => load(borisRecording(false), "finished")}>Пример «Все отделы»</Button>
+        <Button variant="outline" disabled={status === "recording"} onClick={() => load(borisRecording(true), "finished")}>Контроль «Продажи»</Button>
+      </div>
+    </section>
     <section className="lab-card lab-recording">
       <div className="lab-section-head">
         <h2>Запись действий</h2>
@@ -162,6 +172,11 @@ export function Employees({ opening, onInspect, onResearch }: {
       {error && <p role="alert" className="lab-error">{error}</p>}
       {frames.length ? <ol className="employee-journal">{frames.map((frame, index) => <li key={index}>
         <Button variant="ghost" onClick={() => inspect(index)}>Открыть действие {index + 1} на полотне</Button>
+        {recording.data.kind === "demo" && frame.step.action.type === "department" &&
+          frame.step.action.id === 9 && frame.step.action.department === "Поддержка" &&
+          <Button size="sm" variant="outline" onClick={() => act(() => onInspect(inspectArchitectures(
+            { ...recording, steps: frames.map(({ step }) => step) }, "preact", ["A0", "A1", "B0"], "employees", index,
+          )))}>Сравнить A0, A1 и B0</Button>}
         <span>{describeAction(frame.step.action)} · ID [{frame.result.rows.map(({ id }) => id).join(", ")}]
           {frame.result.summary && " · " + frame.result.summary.map(([department, count]) => department + " " + count).join(", ")}</span>
       </li>)}</ol> : <p className="lab-empty">В журнале ещё нет действий. Поиск записывается после подтверждения.</p>}

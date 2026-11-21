@@ -3,8 +3,8 @@ import type { Edge, Node as FlowNode, Viewport } from "@xyflow/react";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { executionDelta } from "../employees/diagnose.ts";
-import { engineLabels, labels, policyLabels } from "../employees/engine.ts";
-import type { Event, Frame, NodeId } from "../employees/engine.ts";
+import { engineLabels, graphLabels, labels, policyLabels } from "../employees/engine.ts";
+import type { DependencyGraph, Event, Frame, NodeId } from "../employees/engine.ts";
 import { describeAction } from "../employees/recording.ts";
 import { FlowCanvas } from "./Graph.tsx";
 import type { Inspection } from "./employee-inspection.ts";
@@ -27,15 +27,16 @@ function message(event: Event): string {
   }
 }
 
-function graphData(inspection: Inspection, frame: Frame, base: Frame | undefined) {
-  const edges: Edge[] = Object.entries(inspection.graph).flatMap(([node, deps]) => deps.map((dep) => ({
+function graphData(graph: DependencyGraph, frame: Frame, base: Frame | undefined) {
+  const edges: Edge[] = Object.entries(graph).flatMap(([node, deps]) => deps.map((dep) => ({
     id: dep + "-" + node, source: dep, target: node,
     style: { stroke: "var(--muted-foreground)", opacity: .65 },
   })));
   const executed = new Set(frame.evaluations.map((item) => item.node));
   const compared = new Set(frame.events.filter((event) => event.kind === "compare" && event.equal).map(({ node }) => node));
   const diff = base ? executionDelta(base, frame) : undefined;
-  const nodes: FlowNode[] = layout.flatMap((row, level) => row.map((node, column) => {
+  const levels = graph.activeDepartments ? [layout[0], ["activeDepartments"] as NodeId[], ...layout.slice(1)] : layout;
+  const nodes: FlowNode[] = levels.flatMap((row, level) => row.map((node, column) => {
     const didExecute = executed.has(node as keyof Inspection["graph"]);
     const same = compared.has(node as "summary" | "filtered" | "pageIds");
     const closed = node === "summary" && !frame.step.outputs.includes("summary");
@@ -90,13 +91,16 @@ export function EmployeeGraph({ inspection, index, theme, onAction, onBack }: {
   const [mode, setMode] = useState<"dependencies" | "reading">("dependencies");
   const [step, setStep] = useState<number | null>(null);
   const [showBase, setShowBase] = useState(false);
+  const [traceIndex, setTraceIndex] = useState(0);
+  const traces = [inspection, ...(inspection.alternatives ?? [])];
+  const active = traces[traceIndex] ?? inspection;
   const viewport = useRef<Viewport | null>(null);
-  const frame = inspection.primary[index];
-  const base = inspection.compare?.[index];
+  const frame = active.primary[index];
+  const base = inspection.compare?.[index] ?? (traceIndex > 0 ? inspection.primary[index] : undefined);
   const current = showBase && base ? base : frame;
   const diff = base ? executionDelta(base, frame) : undefined;
-  const data = mode === "dependencies" ? graphData(inspection, current, showBase ? undefined : base) : eventData(current.events, step);
-  const total = (showBase ? inspection.compare ?? inspection.primary : inspection.primary)
+  const data = mode === "dependencies" ? graphData(active.graph, current, showBase ? undefined : base) : eventData(current.events, step);
+  const total = (showBase ? inspection.compare ?? active.primary : active.primary)
     .reduce((sum, item) => sum + item.evaluations.length, 0);
 
   function modeChange(next: typeof mode) {
@@ -107,9 +111,40 @@ export function EmployeeGraph({ inspection, index, theme, onAction, onBack }: {
 
   return <main className="lab-page employee-graph-page">
     <header className="lab-page-head">
-      <div><h1>Полотно сотрудников</h1><p>{inspection.recording.name} · {engineLabels[inspection.engine]} · {policyLabels[inspection.policy]}</p></div>
+      <div><h1>Полотно сотрудников</h1><p>{inspection.recording.name} · {engineLabels[inspection.engine]} · граф {active.variant ?? "A"} · {graphLabels[active.variant ?? "A"]} · {policyLabels[showBase ? "baseline" : active.policy]}</p></div>
       <Button variant="outline" onClick={onBack}>{inspection.back === "research" ? "К исследованию" : "К сотрудникам"}</Button>
     </header>
+    {traces.length > 1 && <section className="lab-card employee-trace-comparison">
+      <div className="lab-section-head">
+        <h2>Исполнения действия {index + 1}</h2>
+        <div className="lab-controls" role="group" aria-label="Исполнение действия">
+          {traces.map((trace, position) => <Button key={trace.title} variant={position === traceIndex ? "default" : "outline"}
+            aria-pressed={position === traceIndex} onClick={() => {
+              viewport.current = null; setStep(null); setShowBase(false); setTraceIndex(position);
+            }}>{trace.title}</Button>)}
+        </div>
+      </div>
+      <div className="lab-table-scroll"><table className="lab-table results-table">
+        <thead><tr><th>Исполнение</th><th>Запрошено</th><th>Отбор</th><th>Сортировка</th><th>Сравнение ID отбора</th><th>Сводка</th></tr></thead>
+        <tbody>{traces.map((trace) => {
+          const frame = trace.primary[index];
+          const executed = (node: NodeId) => frame.evaluations.some((entry) => entry.node === node);
+          const comparison = frame.events.find((event) => event.kind === "compare" && event.node === "filtered");
+          return <tr key={trace.title}>
+            <th scope="row">{trace.title}</th>
+            <td>{frame.events.flatMap((event) => event.kind === "request" ? [labels[event.node]] : []).join(", ")}</td>
+            <td>{executed("filtered") ? "Выполнился" : "Пропущен"}</td>
+            <td>{executed("sorted") ? "Выполнилась" : "Пропущена"}</td>
+            <td>{comparison?.kind === "compare" ? comparison.equal ? "Прежний результат" : "Результат изменился" : "Не выполнялось"}</td>
+            <td>{!frame.step.outputs.includes("summary") ? "Не запрошена" : executed("summary") ? "Пересчитана" : "Из кеша"}
+              {frame.result.summary && <small className="lab-subline">
+                {frame.result.summary.map(([department, count]) => department + " " + count).join(", ") || "Пустая"}
+              </small>}
+            </td>
+          </tr>;
+        })}</tbody>
+      </table></div>
+    </section>}
     <section className="lab-card employee-flow">
       <div className="lab-controls employee-flow-toolbar">
         <label>Действие<NativeSelect aria-label="Действие" value={index} onChange={(event) => { setStep(null); onAction(Number(event.target.value)); }}>
@@ -119,9 +154,9 @@ export function EmployeeGraph({ inspection, index, theme, onAction, onBack }: {
           <Button variant={mode === "dependencies" ? "default" : "outline"} aria-pressed={mode === "dependencies"} onClick={() => modeChange("dependencies")}>Зависимости</Button>
           <Button variant={mode === "reading" ? "default" : "outline"} aria-pressed={mode === "reading"} onClick={() => modeChange("reading")}>Порядок чтения</Button>
         </div>
-        {base && <Button variant="outline" aria-pressed={showBase} onClick={() => { setShowBase(!showBase); setStep(null); }}>Базовая трасса</Button>}
+        {inspection.compare && <Button variant="outline" aria-pressed={showBase} onClick={() => { setShowBase(!showBase); setStep(null); }}>Базовая трасса</Button>}
       </div>
-      <FlowCanvas key={mode} {...data} viewport={viewport} theme={theme} reading={mode === "reading"} />
+      <FlowCanvas key={mode + "-" + traceIndex} {...data} viewport={viewport} theme={theme} reading={mode === "reading"} />
       {mode === "reading" && <div className="lab-controls employee-flow-toolbar">
         <Button variant="outline" disabled={step === null} onClick={() => setStep(step !== null && step > 0 ? step - 1 : null)}>Назад</Button>
         <Button variant="outline" disabled={step === current.events.length - 1} onClick={() => setStep(step === null ? 0 : step + 1)}>Вперёд</Button>
@@ -134,6 +169,11 @@ export function EmployeeGraph({ inspection, index, theme, onAction, onBack }: {
       <p data-testid="employee-counts">{current.evaluations.length} выполнений за действие · {total} за прогон · {current.events.length} событий</p>
       <p>ID страницы [{current.result.rows.map(({ id }) => id).join(", ")}] · {current.result.pagination.total} строк в отборе ·
         {" "}{current.result.summary ? "Сводка: " + current.result.summary.map(([key, count]) => key + " " + count).join(", ") : "Сводка не запрошена"}</p>
+      {current.step.action.type === "department" && (() => {
+        const { id } = current.step.action;
+        const row = current.result.rows.find((employee) => employee.id === id);
+        return <p>{row ? row.name + " #" + id + " · " + row.department : "Сотрудник #" + id + " отсутствует на странице"}</p>;
+      })()}
       {diff && <p>Пропущено: {diff.omitted.map((node) => labels[node]).join(", ") || "нет"} · Добавилось: {diff.added.map((node) => labels[node]).join(", ") || "нет"}</p>}
       <details><summary>Значения выходов</summary><pre>{JSON.stringify(current.result, null, 2)}</pre>{base && !showBase && <><h3>Базовые значения</h3><pre>{JSON.stringify(base.result, null, 2)}</pre></>}</details>
       <details><summary>Все события действия</summary><ol>{current.events.map((event, i) => <li key={i}>

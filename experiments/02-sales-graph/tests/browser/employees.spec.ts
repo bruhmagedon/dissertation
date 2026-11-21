@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parseRecording } from "../../employees/import.ts";
-import { parseSeries } from "../../employees/series.ts";
+import { parseReport, parseSeries } from "../../employees/series.ts";
 
 for (const width of [1440, 390]) {
   test("запись сотрудников, полотно и возврат на ширине " + width, async ({ page }) => {
@@ -73,8 +73,11 @@ test("пилот, импорт, зафиксированный прогноз, �
   await expect(page.getByText("Завершена · Браузер")).toBeVisible();
   await page.getByRole("button", { name: "Получить прогноз" }).click();
   await expect(page.getByRole("button", { name: "Проверить прогноз" })).toBeVisible();
+  await page.getByLabel("Граф для политик и прогноза").selectOption("B");
   await page.getByRole("button", { name: "Проверить прогноз" }).click();
   await expect(page.getByRole("heading", { name: /Проверочная запись/ })).toBeVisible();
+  await expect(page.getByText(/Граф A\. Минимальная наблюдавшаяся медиана/)).toBeVisible();
+  await expect(page.getByText("Недостаточно данных для вывода · 5 пар").first()).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Цена выбора, мс" })).toBeVisible();
   await page.getByRole("combobox", { name: "Сотрудников", exact: true }).selectOption("10000");
   await page.getByRole("button", { name: "Расширенная серия" }).click();
@@ -86,10 +89,73 @@ test("пилот, импорт, зафиксированный прогноз, �
 
 test("отчёт CLI открывается и показывает трассу выбранной политики", async ({ page }) => {
   await page.goto("/#/research");
+  await page.getByLabel("Граф для политик и прогноза").selectOption("B");
   await page.getByLabel("Импорт серии").setInputFiles("results/preact-editing-1000-pilot.json");
   await expect(page.getByText("Завершена · Node.js")).toBeVisible();
   await expect(page.getByText(/CLI TypeScript/)).toHaveCount(1);
   await page.getByRole("button", { name: "На полотно · Отбор", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Полотно сотрудников" })).toBeVisible();
+  await expect(page.getByText(/граф A · Общий отбор/)).toBeVisible();
   await expect(page.getByText(/Пропущено: .*Сортировка/)).toBeVisible();
+});
+
+test("перевод Бориса на трёх сохранённых трассах и контроль с активным фильтром", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto("/#/employees");
+  await page.getByRole("button", { name: "Пример «Все отделы»" }).click();
+  await expect(page.getByRole("row", { name: /Борис/ })).toContainText("Поддержка");
+  await page.getByRole("button", { name: "Сравнить A0, A1 и B0" }).click();
+  await expect(page.getByRole("heading", { name: "Исполнения действия 3" })).toBeVisible();
+  const comparison = page.getByRole("table").filter({ has: page.getByRole("columnheader", { name: "Сравнение ID отбора" }) });
+  await expect(comparison.getByRole("row", { name: /^A0/ })).toContainText("Выполнилась");
+  await expect(comparison.getByRole("row", { name: /^A1/ })).toContainText("Прежний результат");
+  await expect(comparison.getByRole("row", { name: /^B0/ })).toContainText("Пропущен");
+  await expect(comparison.getByRole("row", { name: /^B0/ })).toContainText("Пересчитана");
+  await page.getByRole("button", { name: "B0", exact: true }).click();
+  await expect(page.getByText(/граф B · Отбор по активному фильтру/)).toBeVisible();
+  await expect(page.getByText("Борис #9 · Поддержка")).toBeVisible();
+  const saved = await page.getByTestId("employee-counts").innerText();
+  await page.getByRole("button", { name: "Порядок чтения" }).click();
+  await page.getByRole("button", { name: "Вперёд", exact: true }).click();
+  await page.getByRole("button", { name: "A1", exact: true }).click();
+  await page.getByRole("button", { name: "B0", exact: true }).click();
+  await expect(page.getByLabel("Действие", { exact: true })).toHaveValue("2");
+  await expect(page.getByTestId("employee-counts")).toHaveText(saved);
+  await page.getByRole("button", { name: "К сотрудникам" }).click();
+  await page.getByRole("button", { name: "Контроль «Продажи»" }).click();
+  await expect(page.getByRole("row", { name: /Борис/ })).toHaveCount(0);
+  await page.getByRole("button", { name: "Сравнить A0, A1 и B0" }).click();
+  await expect(comparison.getByRole("row", { name: /^B0/ })).toContainText("Выполнилась");
+  await page.getByRole("button", { name: "B0", exact: true }).click();
+  await expect(page.getByText(/ID страницы \[7\]/)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("два условия переводов и общий браузерный повтор архитектур", async ({ page }) => {
+  await page.goto("/#/research");
+  await page.getByLabel("Граф для политик и прогноза").selectOption("B");
+  await page.getByRole("button", { name: "Сопоставить условия" }).click();
+  await expect(page.getByRole("row", { name: /Сводка закрыта/ })).toContainText("Строки, Пагинация");
+  await expect(page.getByRole("row", { name: /Сводка открыта/ })).toContainText("Строки, Пагинация, Сводка");
+  await page.getByRole("button", { name: "Открыть обе трассы" }).click();
+  await expect(page.getByText(/Сводка не запрошена/)).toBeVisible();
+  await page.getByRole("button", { name: "Сводка открыта", exact: true }).click();
+  await expect(page.getByText(/Сводка:/).first()).toBeVisible();
+  await page.getByRole("button", { name: "К исследованию" }).click();
+  await page.getByLabel("Что меняется").selectOption("filter");
+  await page.getByRole("button", { name: "Сопоставить условия" }).click();
+  await expect(page.getByRole("row", { name: /Фильтр «Продажи»/ })).toContainText("Строки, Пагинация, Сводка");
+  await page.getByLabel("Эксперимент", { exact: true }).selectOption("architecture");
+  await page.getByRole("button", { name: "Запустить пилот" }).click();
+  await expect(page.getByRole("heading", { name: "Сравнение архитектур" })).toBeVisible();
+  await expect(page.getByText("Недостаточно данных для вывода · 5 пар")).toHaveCount(4);
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Скачать серию JSON" }).click();
+  const file = await (await download).path();
+  const report = parseReport(JSON.parse(readFileSync(file!, "utf8")));
+  expect(report.trials).toHaveLength(20);
+  expect("comparison" in report && report.comparison).toBe("architecture");
+  await page.getByLabel("Импорт серии").setInputFiles(file!);
+  await page.getByRole("button", { name: "На полотно · B0" }).click();
+  await expect(page.getByRole("button", { name: "B0", exact: true })).toHaveAttribute("aria-pressed", "true");
 });

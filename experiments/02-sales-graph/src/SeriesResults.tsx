@@ -1,18 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { policyLabels, policies, engineLabels } from "../employees/engine.ts";
+import { policyLabels, policies, engineLabels, graphLabels } from "../employees/engine.ts";
 import type { Policy } from "../employees/engine.ts";
 import { interpretation, paired, summarizeTrial } from "../employees/series.ts";
-import type { Series } from "../employees/series.ts";
+import type { Report, Series } from "../employees/series.ts";
 import { downloadJson } from "./recording-files.ts";
 
 export const ms = (value: number) => Number.isFinite(value) ? value.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) : "—";
 export function dataLabel(recording: Series["recording"]) {
   return recording.data.kind === "demo" ? "3 сотрудника" : recording.data.size.toLocaleString("ru-RU") + " сотрудников · seed " + recording.data.seed;
 }
-export function seriesTitle(report: Series) {
-  const stats = report.diagnostics.baseline;
+export function seriesTitle(report: Report) {
+  const stats = "comparison" in report ? report.diagnostics.A0 : report.diagnostics.baseline;
+  const architecture = "comparison" in report ? "A0 / A1 / B0 / B1" : report.graph + " · " + graphLabels[report.graph];
   const summary = stats ? " · сводка " + stats.summaryReads + "/" + report.recording.steps.length : "";
-  return ["Сотрудники", engineLabels[report.engine] + " " + report.version, dataLabel(report.recording), report.recording.name,
+  return ["Сотрудники", engineLabels[report.engine] + " " + report.version, architecture, dataLabel(report.recording), report.recording.name,
     "строки и пагинация" + summary].join(" · ");
 }
 
@@ -66,7 +67,7 @@ export function SeriesResults({ report, onInspect }: { report: Series; onInspect
 }
 
 export function EffectChart({ reports, selected }: { reports: Series[]; selected: Series }) {
-  const relevant = reports.filter((report) => report.engine === selected.engine && report.version === selected.version &&
+  const relevant = reports.filter((report) => report.engine === selected.engine && report.version === selected.version && report.graph === selected.graph &&
     report.environment.runtime === selected.environment.runtime && report.environment.build === selected.environment.build &&
     report.environment.details === selected.environment.details && JSON.stringify(report.parameters) === JSON.stringify(selected.parameters) &&
     (report.recording.data.kind === "demo" ? selected.recording.data.kind === "demo" :

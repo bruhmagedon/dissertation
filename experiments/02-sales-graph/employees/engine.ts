@@ -7,6 +7,13 @@ export const engines = ["preact", "reselect"] as const;
 export type Engine = typeof engines[number];
 export const engineLabels: Record<Engine, string> = { preact: "Preact Signals", reselect: "Reselect" };
 export const engineVersions: Record<Engine, string> = { preact: "1.14.5", reselect: "5.1.1" };
+export const graphVariants = ["A", "B"] as const;
+export type GraphVariant = typeof graphVariants[number];
+export const graphLabels: Record<GraphVariant, string> = {
+  A: "Общий отбор",
+  B: "Отбор по активному фильтру",
+};
+
 export const candidates = ["filtered", "pageIds", "summary"] as const;
 export const policies = ["baseline", ...candidates] as const;
 export type Candidate = typeof candidates[number];
@@ -29,6 +36,7 @@ export type Input = keyof Inputs;
 export interface Pagination { page: number; pages: number; total: number }
 export type Summary = [Department, number][];
 export interface Values {
+  activeDepartments: Departments | null;
   filtered: number[];
   sorted: number[];
   pageIds: number[];
@@ -44,6 +52,7 @@ export type Result = Pick<Values, "rows" | "pagination"> & Partial<Pick<Values, 
 export const labels: Record<NodeId, string> = {
   directory: "Справочник", departments: "Отделы", phones: "Телефоны",
   query: "Поиск", filter: "Фильтр", sort: "Режим сортировки", page: "Номер страницы", pageSize: "Размер страницы",
+  activeDepartments: "Карта активного фильтра",
   filtered: "Отбор", sorted: "Сортировка", pageIds: "ID страницы",
   rows: "Строки", pagination: "Пагинация", summary: "Сводка",
 };
@@ -80,11 +89,11 @@ interface Trace {
 }
 
 const collator = new Intl.Collator("ru");
-function select(directory: Inputs["directory"], byDepartment: Departments, query: string, filter: Inputs["filter"]) {
+function select(directory: Inputs["directory"], byDepartment: Departments | null, query: string, filter: Inputs["filter"]) {
   const needle = query.trim().toLocaleLowerCase("ru");
   const ids: number[] = [];
   for (const person of directory.values()) {
-    if ((!filter || byDepartment.get(person.id) === filter) &&
+    if ((!filter || byDepartment?.get(person.id) === filter) &&
       (!needle || person.name.toLocaleLowerCase("ru").includes(needle))) ids.push(person.id);
   }
   return ids;
@@ -127,6 +136,7 @@ export function firstMismatch(node: Candidate, previous: readonly unknown[], nex
 }
 
 function preview(value: unknown) {
+  if (value instanceof Map) return { entries: value.size };
   return Array.isArray(value) && value.length > 12
     ? { length: value.length, first: value.slice(0, 6) }
     : value;
@@ -141,6 +151,7 @@ export function createEmployeeRun(
   engine: Engine,
   policy: Policy,
   mode: "timing" | "diagnostic" | "calibration" = "diagnostic",
+  variant: GraphVariant = "A",
 ) {
   const people = generateEmployees(recording.data);
   const initial = recording.initial;
@@ -255,7 +266,12 @@ export function createEmployeeRun(
   const phones = source("phones");
   const page = source("page");
   const pageSize = source("pageSize");
-  const filtered = node("filtered", [directory, byDepartment, source("query"), source("filter")], select);
+  const filter = source("filter");
+  // При фильтре «Все» неизменный null даёт обоим движкам пропустить функцию отбора.
+  const departmentInput = variant === "B"
+    ? node("activeDepartments", [filter, byDepartment], (filter, map) => filter ? map : null)
+    : byDepartment;
+  const filtered = node("filtered", [directory, departmentInput, source("query"), filter], select);
   const sorted = node("sorted", [filtered, source("sort"), directory], sortIds);
   const info = node("pagination", [filtered, page, pageSize], pagination);
   const visible = node("pageIds", [sorted, info, pageSize], pageIds);

@@ -1,0 +1,1135 @@
+{
+  "forecast": {
+    "recording": {
+      "schema": 1,
+      "name": "Редактирование карточек · запись 1",
+      "profile": "editing",
+      "data": {
+        "kind": "generated",
+        "size": 1000,
+        "seed": 42
+      },
+      "initial": {
+        "query": "",
+        "department": "",
+        "sort": "name",
+        "page": 0,
+        "pageSize": 20,
+        "summary": false
+      },
+      "steps": [
+        {
+          "action": {
+            "type": "phone",
+            "id": 309,
+            "phone": "+7 901 0000001"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 309,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 0
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 107,
+            "phone": "+7 901 0000002"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 107,
+            "department": "Поддержка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 1
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 573,
+            "phone": "+7 901 0000003"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 573,
+            "department": "Операции"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 2
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 957,
+            "phone": "+7 901 0000004"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 957,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 3
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 742,
+            "phone": "+7 901 0000005"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 742,
+            "department": "Поддержка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 4
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 405,
+            "phone": "+7 901 0000006"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 405,
+            "department": "Поддержка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 5
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 181,
+            "phone": "+7 901 0000007"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 181,
+            "department": "Поддержка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 6
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "phone",
+            "id": 383,
+            "phone": "+7 901 0000008"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "department",
+            "id": 383,
+            "department": "Разработка"
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        },
+        {
+          "action": {
+            "type": "page",
+            "page": 7
+          },
+          "outputs": [
+            "rows",
+            "pagination"
+          ]
+        }
+      ]
+    },
+    "engine": "preact",
+    "graph": "A",
+    "version": "1.14.5",
+    "created": "2026-11-21T11:18:27.685Z",
+    "threshold": 0.05,
+    "repetitions": 24,
+    "profilingMs": 149.163101,
+    "calibrationMs": 303.007203,
+    "estimates": [
+      {
+        "policy": "filtered",
+        "score": 11.955419916666663,
+        "matches": 8,
+        "checks": 8,
+        "descendants": 5,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.000801041666666317,
+            "savedMs": 1.9799417083333377
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0006750000000004993,
+            "savedMs": 1.3965875
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.002688541666666211,
+            "savedMs": 1.4208166666666648
+          },
+          {
+            "action": 8,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0006677083333332945,
+            "savedMs": 1.3722000416666684
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0008343750000001648,
+            "savedMs": 1.3853083333333323
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.000673958333333502,
+            "savedMs": 1.3804083333333306
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0006562499999998769,
+            "savedMs": 1.393079208333333
+          },
+          {
+            "action": 20,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": true,
+            "omitted": [
+              "sorted",
+              "pagination",
+              "pageIds"
+            ],
+            "compareMs": 0.0015416666666669225,
+            "savedMs": 1.6356166666666638
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "pageIds",
+        "score": -0.0007916666666674861,
+        "matches": 8,
+        "checks": 15,
+        "descendants": 1,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00006562500000010611,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00005000000000047559,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00004374999999967599,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.0001125000000001819,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.0000895833333333466,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00014791666666684003,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666667027624,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00003541666666665814,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666666435503,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00004062500000046043,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000019791666666435503,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.000030208333332855847,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.000013541666666820143,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": true,
+            "omitted": [],
+            "compareMs": 0.00006874999999932167,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": false,
+            "omitted": [],
+            "compareMs": 0.00003437500000084507,
+            "savedMs": 0
+          }
+        ]
+      },
+      {
+        "policy": "summary",
+        "score": 0,
+        "matches": 0,
+        "checks": 0,
+        "descendants": 0,
+        "actions": [
+          {
+            "action": 0,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 1,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 2,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 3,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 4,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 5,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 6,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 7,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 8,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 9,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 10,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 11,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 12,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 13,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 14,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 15,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 16,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 17,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 18,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 19,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 20,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 21,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 22,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          },
+          {
+            "action": 23,
+            "equal": null,
+            "omitted": [],
+            "compareMs": 0,
+            "savedMs": 0
+          }
+        ]
+      }
+    ],
+    "rules": {
+      "baseline": "baseline",
+      "frequency": "filtered",
+      "descendants": "filtered",
+      "model": "filtered"
+    }
+  },
+  "holdout": {
+    "schema": 1,
+    "name": "Редактирование карточек · запись 2",
+    "profile": "editing",
+    "data": {
+      "kind": "generated",
+      "size": 1000,
+      "seed": 42
+    },
+    "initial": {
+      "query": "",
+      "department": "",
+      "sort": "name",
+      "page": 0,
+      "pageSize": 20,
+      "summary": false
+    },
+    "steps": [
+      {
+        "action": {
+          "type": "phone",
+          "id": 331,
+          "phone": "+7 901 0000101"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 331,
+          "department": "Разработка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 0
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 855,
+          "phone": "+7 901 0000102"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 855,
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 1
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 857,
+          "phone": "+7 901 0000103"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 857,
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 2
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 205,
+          "phone": "+7 901 0000104"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 205,
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 3
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 233,
+          "phone": "+7 901 0000105"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 233,
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 4
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 141,
+          "phone": "+7 901 0000106"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 141,
+          "department": "Поддержка"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 5
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 186,
+          "phone": "+7 901 0000107"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 186,
+          "department": "Продажи"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 6
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "phone",
+          "id": 858,
+          "phone": "+7 901 0000108"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "department",
+          "id": 858,
+          "department": "Операции"
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      },
+      {
+        "action": {
+          "type": "page",
+          "page": 7
+        },
+        "outputs": [
+          "rows",
+          "pagination"
+        ]
+      }
+    ]
+  }
+}
