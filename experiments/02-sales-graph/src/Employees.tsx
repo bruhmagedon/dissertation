@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { FileInput } from "@/components/ui/file-input";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Select, SelectItem } from "@/components/ui/select";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { borisRecording } from "../employees/conditions.ts";
 import { createEmployeeRun } from "../employees/engine.ts";
@@ -26,6 +27,8 @@ export function Employees({ opening, onInspect, onResearch }: {
   onResearch: (recording: Recording) => void;
 }) {
   const runner = useRef(opening.runner);
+  const initial = useRef(opening.first);
+  const [guidedExample, setGuidedExample] = useState(false);
   const [recording, setRecording] = useState(demoRecording);
   const [saved, setSaved] = useState(savedRecording);
   const [frames, setFrames] = useState<Frame[]>([]);
@@ -52,6 +55,8 @@ export function Employees({ opening, onInspect, onResearch }: {
     const replay = nextStatus === "finished";
     const next = playback(source, replay);
     runner.current = next.runner;
+    initial.current = next.first;
+    setGuidedExample(false);
     setRecording(replay ? source : { ...source, name: "Моя запись", profile: "custom", steps: [] });
     setFrames(next.frames);
     setCurrent(next.frames.at(-1) ?? next.first);
@@ -87,7 +92,7 @@ export function Employees({ opening, onInspect, onResearch }: {
   }
   function inspect(index: number) {
     const source = { ...recording, steps: frames.map((frame) => frame.step) };
-    onInspect({ recording: source, engine: "preact", graph: runner.current.graph, policy: "baseline", primary: frames, action: index, back: "employees" });
+    onInspect({ recording: source, engine: "preact", graph: runner.current.graph, policy: "baseline", primary: frames, initial: initial.current, action: index, back: "employees" });
   }
 
   return <main className="lab-page">
@@ -97,17 +102,32 @@ export function Employees({ opening, onInspect, onResearch }: {
         {view.summary ? "Закрыть сводку" : "Открыть сводку"}
       </Button>
     </header>
+    <section className="lab-card guided-example">
+      <h2>Готовый пример с Борисом</h2>
+      <p>Стенд откроет сводку и переведёт Бориса из продаж в поддержку. Сравните, останется ли он в таблице и как поменяется число сотрудников в отделах.</p>
+      <div className="lab-controls">
+        <Button disabled={status === "recording"} onClick={() => { load(borisRecording(false), "finished"); setGuidedExample(true); }}>Пример «Все отделы»</Button>
+        <Button variant="outline" disabled={status === "recording"} onClick={() => { load(borisRecording(true), "finished"); setGuidedExample(true); }}>Контроль «Продажи»</Button>
+      </div>
+      {guidedExample && <div className="guided-example-next">
+        <p>Пример выполнен. Таблица и сводка ниже показывают итог перевода. Выберите действие, чтобы увидеть, как экран получил результат.</p>
+        <div className="lab-controls">
+          <Button variant="outline" onClick={() => inspect(1)}>Разобрать открытие сводки</Button>
+          <Button variant="outline" onClick={() => inspect(2)}>Разобрать перевод Бориса</Button>
+        </div>
+      </div>}
+    </section>
     <div className="employee-workspace">
       <section className="lab-card employee-table" aria-label="Таблица сотрудников">
         <form className="lab-controls table-filters" onSubmit={(event) => { event.preventDefault(); apply({ type: "search", query: search }); }}>
           <label>Поиск по имени<Input value={search} maxLength={120} onChange={(event) => setSearch(event.target.value)} /></label>
           <Button type="submit">Найти</Button>
-          <label>Отдел<NativeSelect aria-label="Отдел" value={view.department} onChange={(event) => apply({ type: "filter", department: event.target.value as Department | "" })}>
-            <option value="">Все отделы</option>{departments.map((department) => <option key={department}>{department}</option>)}
-          </NativeSelect></label>
-          <label>Сортировка<NativeSelect aria-label="Сортировка" value={view.sort} onChange={(event) => apply({ type: "sort", sort: event.target.value as Sort })}>
-            <option value="name">Имя А–Я</option><option value="name-desc">Имя Я–А</option><option value="id">ID</option>
-          </NativeSelect></label>
+          <label>Отдел<Select aria-label="Отдел" value={view.department || "all"} onValueChange={(value) => apply({ type: "filter", department: value === "all" ? "" : value as Department })}>
+            <SelectItem value="all">Все отделы</SelectItem>{departments.map((department) => <SelectItem key={department} value={String(department)}>{department}</SelectItem>)}
+          </Select></label>
+          <label>Сортировка<Select aria-label="Сортировка" value={view.sort} onValueChange={(value) => apply({ type: "sort", sort: value as Sort })}>
+            <SelectItem value="name">Имя А–Я</SelectItem><SelectItem value="name-desc">Имя Я–А</SelectItem><SelectItem value="id">ID</SelectItem>
+          </Select></label>
         </form>
         <div className="lab-table-scroll">
           <table className="lab-table">
@@ -130,26 +150,18 @@ export function Employees({ opening, onInspect, onResearch }: {
         {summary.length ? <dl>{summary.map(([department, count]) => <div key={department}><dt>{department}</dt><dd>{count}</dd></div>)}</dl> : <p>По текущему отбору нет сотрудников.</p>}
       </section>}
     </div>
-    <section className="lab-card">
-      <h2>Перевод Бориса</h2>
-      <p>В обоих примерах сводка открыта. Последнее действие переводит Бориса из «Продаж» в «Поддержку».</p>
-      <div className="lab-controls">
-        <Button variant="outline" disabled={status === "recording"} onClick={() => load(borisRecording(false), "finished")}>Пример «Все отделы»</Button>
-        <Button variant="outline" disabled={status === "recording"} onClick={() => load(borisRecording(true), "finished")}>Контроль «Продажи»</Button>
-      </div>
-    </section>
     <section className="lab-card lab-recording">
       <div className="lab-section-head">
         <h2>Запись действий</h2>
         <span role="status">{status === "recording" ? "Идёт запись" : status === "finished" ? recording.name + " · завершена" : "Ожидает запуска"} · {frames.length} действий</span>
       </div>
       <div className="lab-controls">
-        <label>Профиль<NativeSelect aria-label="Профиль" value={profile} disabled={status === "recording"} onChange={(event) => setProfile(event.target.value as typeof profile)}>
-          <option value="demo">Разбор по шагам</option>{Object.entries(profileLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
-        </NativeSelect></label>
+        <label>Профиль<Select aria-label="Профиль" value={profile} disabled={status === "recording"} onValueChange={(value) => setProfile(value as typeof profile)}>
+          <SelectItem value="demo">Разбор по шагам</SelectItem>{Object.entries(profileLabels).map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}
+        </Select></label>
         {profile !== "demo" && <>
-          <label>Сотрудников<NativeSelect aria-label="Сотрудников" disabled={status === "recording"} value={size} onChange={(event) => setSize(Number(event.target.value) as Size)}>{sizes.map((item) => <option key={item}>{item}</option>)}</NativeSelect></label>
-          <label>Seed<Input className="lab-number" type="number" min="0" step="1" disabled={status === "recording"} value={seed} onChange={(event) => setSeed(event.target.value)} /></label>
+          <label>Сотрудников<Select aria-label="Сотрудников" disabled={status === "recording"} value={String(size)} onValueChange={(value) => setSize(Number(value) as Size)}>{sizes.map((item) => <SelectItem key={item} value={String(item)}>{item}</SelectItem>)}</Select></label>
+          <label>Seed<Input className="w-24" type="number" min="0" step="1" disabled={status === "recording"} value={seed} onChange={(event) => setSeed(event.target.value)} /></label>
         </>}
         {status === "recording" ?
           <Button disabled={!frames.length} onClick={save}>Завершить и сохранить</Button> :
@@ -158,11 +170,11 @@ export function Employees({ opening, onInspect, onResearch }: {
             <Button variant="outline" onClick={() => act(() => load(scenario(), "finished"))}>Воспроизвести пресет</Button>
             {saved && <Button variant="outline" onClick={() => load(saved, "finished")}>Открыть сохранённую</Button>}
           </>}
-        {status !== "recording" && <label className="lab-upload">Импорт записи<input aria-label="Импорт записи" type="file" accept=".json,application/json" onChange={(event) => {
+        {status !== "recording" && <FileInput aria-label="Импорт записи" accept=".json,application/json" onChange={(event) => {
           const file = event.target.files?.[0];
           if (file) void importFile(file);
           event.target.value = "";
-        }} /></label>}
+        }}>Импорт записи</FileInput>}
       </div>
       {status === "finished" && <div className="lab-controls">
         <Button variant="outline" onClick={() => load(recording, "finished")}>Повторить с начала</Button>
@@ -171,13 +183,14 @@ export function Employees({ opening, onInspect, onResearch }: {
       </div>}
       {error && <p role="alert" className="lab-error">{error}</p>}
       {frames.length ? <ol className="employee-journal">{frames.map((frame, index) => <li key={index}>
-        <Button variant="ghost" onClick={() => inspect(index)}>Открыть действие {index + 1} на полотне</Button>
+        <Button variant="ghost" aria-label={`Открыть действие ${index + 1} на полотне · ${describeAction(frame.step.action)}`}
+          onClick={() => inspect(index)}>{index + 1}. {describeAction(frame.step.action)}</Button>
         {recording.data.kind === "demo" && frame.step.action.type === "department" &&
           frame.step.action.id === 9 && frame.step.action.department === "Поддержка" &&
           <Button size="sm" variant="outline" onClick={() => act(() => onInspect(inspectArchitectures(
             { ...recording, steps: frames.map(({ step }) => step) }, "preact", ["A0", "A1", "B0"], "employees", index,
           )))}>Сравнить A0, A1 и B0</Button>}
-        <span>{describeAction(frame.step.action)} · ID [{frame.result.rows.map(({ id }) => id).join(", ")}]
+        <span>ID [{frame.result.rows.map(({ id }) => id).join(", ")}]
           {frame.result.summary && " · " + frame.result.summary.map(([department, count]) => department + " " + count).join(", ")}</span>
       </li>)}</ol> : <p className="lab-empty">В журнале ещё нет действий. Поиск записывается после подтверждения.</p>}
     </section>
@@ -198,9 +211,9 @@ export function Employees({ opening, onInspect, onResearch }: {
             apply({ type: "department", id: editor.id, department: editor.department });
             setEditor(null);
           }}>
-            <label>Новый отдел<NativeSelect aria-label="Новый отдел" value={editor.department} onChange={(event) => setEditor({ ...editor, department: event.target.value as Department })}>
-              {departments.map((department) => <option key={department}>{department}</option>)}
-            </NativeSelect></label>
+            <label>Новый отдел<Select aria-label="Новый отдел" value={editor.department} onValueChange={(value) => setEditor({ ...editor, department: value as Department })}>
+              {departments.map((department) => <SelectItem key={department} value={String(department)}>{department}</SelectItem>)}
+            </Select></label>
             <Button type="submit">Сохранить отдел</Button>
           </form>
           <Button variant="outline" onClick={() => setEditor(null)}>Закрыть</Button>

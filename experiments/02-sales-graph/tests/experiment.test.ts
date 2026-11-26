@@ -1,6 +1,7 @@
 import { deepStrictEqual, equal, throws } from "node:assert/strict";
 import { test } from "node:test";
-import { createExperiment, runScenario, snapshotFromJournal } from "../experiment.ts";
+import { createExperiment, createSalesGraph, runScenario, snapshotFromJournal } from "../experiment.ts";
+import { summarizeSalesTiming } from "../sales-timing.ts";
 import { operationTraces, traceFrame } from "../trace.ts";
 
 test("оба сценария сохраняют исходные результаты и реальные вызовы", () => {
@@ -144,4 +145,55 @@ test("проверки зависимостей и их дочерние обр�
     }
     deepStrictEqual(experiment.snapshot(), snapshot);
   }
+});
+
+test("граф без диагностики сохраняет кеш и проверку равенства массива", () => {
+  const source = [10, 20, 30, 40];
+  for (const mode of ["normal", "reuse-array"] as const) {
+    const calls = { filter: 0, reduce: 0, every: 0 };
+    const observed = Object.assign([...source], {
+      filter(predicate: (sale: number) => boolean) {
+        calls.filter++;
+        return new Proxy(source.filter(predicate), {
+          get(array, key, receiver) {
+            if (key === "reduce" || key === "every") calls[key]++;
+            return Reflect.get(array, key, receiver);
+          },
+        });
+      },
+    });
+    const graph = createSalesGraph(mode, observed);
+    graph.writeThreshold(11);
+    equal(graph.readAverage(), 30);
+    graph.writeThreshold(12);
+    equal(graph.readAverage(), 30);
+    equal(graph.readAverage(), 30);
+    deepStrictEqual(calls, mode === "normal"
+      ? { filter: 2, reduce: 2, every: 0 }
+      : { filter: 2, reduce: 1, every: 1 });
+    graph.writeThreshold(11);
+    equal(graph.readAverage(), 30);
+    graph.writeThreshold(12);
+    equal(graph.readAverage(), 30);
+    deepStrictEqual(calls, mode === "normal"
+      ? { filter: 4, reduce: 4, every: 0 }
+      : { filter: 4, reduce: 1, every: 3 });
+    graph.writeThreshold(30);
+    equal(graph.readAverage(), 35);
+  }
+});
+
+test("сводка времени нормирует пачки и использует разности внутри пар", () => {
+  const trials = [
+    { normalBatchMs: 1, reuseBatchMs: 1 },
+    { normalBatchMs: 2, reuseBatchMs: 8 },
+    { normalBatchMs: 10, reuseBatchMs: 9 },
+  ];
+  const summary = summarizeSalesTiming(trials, 10, .1);
+  equal(summary.normalMs, .2);
+  equal(summary.reuseMs, .8);
+  equal(summary.differenceMs, 0);
+  equal(summary.insufficientPrecision, true);
+  // Разница на переход меньше физического шага, но различима на пачке.
+  equal(summarizeSalesTiming([{ normalBatchMs: 2, reuseBatchMs: 1 }], 100, .1).insufficientPrecision, false);
 });

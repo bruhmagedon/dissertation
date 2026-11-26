@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { formatDisplayValue as formatValue } from "./formatForDisplay.ts";
 import { exportComparisons } from "../comparison-export.ts";
 import { Hint } from "@/components/ui/tooltip";
+import { SalesTiming } from "./SalesTiming.tsx";
 
 export type SavedRun = { mode: SelectionMode; snapshot: Snapshot };
 
@@ -84,6 +85,7 @@ export function CompareRuns({ open, onOpenChange, runs, onSelect, sizeDraft, onS
             </fieldset>
             <p className="comparison-settings-help">{operations.length ? `Будут повторены: ${operations.map((event) => event.type === "write" ? `записать ${event.value}` : "прочитать").join(" → ")}` : "Сначала выполните записи и чтения на полотне."}</p>
           </form>
+          <SalesTiming />
           {source && <p className="comparison-dataset"><strong>{source.salesCount.toLocaleString("ru-RU")} продаж</strong> · в выборке {operationTraces(source.log).filter((trace) => trace.operation.type === "read").slice(-2).map((trace) => (selectionSize(trace.after.values.filtered) ?? 0).toLocaleString("ru-RU")).join(" → ") || "чтений ещё нет"}<span>Показанные результаты: {scenario}</span></p>}
           {normal && reused && readingCount > 0 && <p className="comparison-saving">{readingLabel}: <strong>{normal.total} → {computationCount(reused.total)}</strong></p>}
           <div className="comparison-columns">
@@ -107,10 +109,10 @@ export function CompareRuns({ open, onOpenChange, runs, onSelect, sizeDraft, onS
                   <ol className="comparison-operations">
                     {traces.map((trace) => {
                       const executions = Object.values(trace.after.calls).reduce((total, count) => total + count, 0) - Object.values(trace.before.calls).reduce((total, count) => total + count, 0);
-                      return <li key={trace.start}><button type="button" onClick={() => onSelect(run, trace.start)}>
+                      return <li key={trace.start}><Button variant="outline" className="h-auto w-full justify-between rounded-lg px-3 py-2.5 text-left whitespace-normal" type="button" onClick={() => onSelect(run, trace.start)}>
                         <span><strong>{trace.index + 1}. {trace.operation.type === "write" ? `Записать ${trace.after.threshold}` : `Прочитать среднее · ${formatValue(trace.after.readings.at(-1))}`}</strong><small>{computationCount(executions)}</small></span>
                         <ArrowUpRight size={16} aria-hidden="true" />
-                      </button></li>;
+                      </Button></li>;
                     })}
                   </ol>
                 </section>

@@ -88,7 +88,8 @@ test("панорамирование, масштаб, просмотр и экс
   await journal.hover();
   await page.mouse.wheel(0, 500);
   await expect.poll(() => journal.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-  await page.getByLabel("Фильтр журнала").selectOption("computed");
+  await page.getByLabel("Фильтр журнала").click();
+  await page.getByRole("option", { name: "Вызовы computed", exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Скачать TXT" }).click();
   const download = await downloadPromise;
@@ -99,7 +100,8 @@ test("панорамирование, масштаб, просмотр и экс
   await journal.getByRole("button").last().click();
   await expect(page.getByLabel("Снимок события")).toContainText("После события");
   await page.getByRole("button", { name: "Закрыть снимок" }).click();
-  await page.getByLabel("Фильтр журнала").selectOption("all");
+  await page.getByLabel("Фильтр журнала").click();
+  await page.getByRole("option", { name: "Все события", exact: true }).click();
   await expect(page.getByRole("table").locator("tbody td")).toHaveText(counts);
   await expect(journal.locator(".log-entry")).toHaveText(log);
   // Явное чтение публикует новый снимок и выявило бы скрытые вызовы при просмотре.
@@ -128,8 +130,16 @@ test("пустая выборка, сброс и мобильная ширина
 test("снимки интерфейса и отсутствие ошибок браузера", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.setViewportSize({ width: 1440, height: 1100 });
+  const write = page.getByRole("button", { name: "Записать", exact: true });
+  const read = page.getByRole("button", { name: "Прочитать среднее" });
+  await page.setViewportSize({ width: 320, height: 568 });
   await page.goto("/");
+  await expect(write).toBeInViewport({ ratio: 1 });
+  await expect(read).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect(write).toBeInViewport({ ratio: 1 });
+  await expect(read).toBeInViewport({ ratio: 1 });
   await page.getByRole("button", { name: "Запустить сценарий A" }).click();
   await expect(page.locator(".react-flow__node")).toHaveCount(5);
   await expect(page.locator(".react-flow__edge")).toHaveCount(5);
@@ -325,3 +335,69 @@ for (const name of ["A", "B"] as const) {
     await expectSnapshot(page, expected);
   });
 }
+
+test("замер продаж обновляет три размера и сохраняет переход из сравнения на полотно", async ({ page }) => {
+  await page.goto("/");
+  const openComparison = page.getByRole("button", { name: "Сравнить прогоны" });
+  const dialog = page.getByRole("dialog", { name: "Сравнить прогоны" });
+  const startTiming = dialog.getByRole("button", { name: "Замерить время" });
+  await openComparison.click();
+  await expect(startTiming).toBeEnabled();
+  await dialog.getByRole("button", { name: "Закрыть сравнение" }).click();
+
+  for (const threshold of [11, 12]) {
+    await page.getByLabel("Новый порог", { exact: true }).fill(String(threshold));
+    await page.getByRole("button", { name: "Записать", exact: true }).click();
+    await page.getByRole("button", { name: "Прочитать среднее", exact: true }).click();
+  }
+  const readings = await page.getByTestId("readings").innerText();
+  const events = await page.getByTestId("journal").locator(".journal-event-text").allTextContents();
+  await openComparison.click();
+  await dialog.getByRole("button", { name: /^1\s000$/ }).click();
+  await dialog.getByRole("button", { name: "Запустить сравнение" }).click();
+  await expect(dialog.getByText(/На втором чтении: 3 → 1 вычисление/)).toBeVisible();
+  const timing = dialog.getByRole("table", { name: "Результаты замера времени" });
+  const initialThreshold = dialog.getByLabel("Исходный порог");
+  const nextThreshold = dialog.getByLabel("Новый порог");
+  await expect(initialThreshold).toHaveValue("11");
+  await expect(nextThreshold).toHaveValue("12");
+  for (const from of [11, 10]) {
+    const to = from + 1;
+    await initialThreshold.fill("");
+    await expect(startTiming).toBeDisabled();
+    await initialThreshold.fill(String(from));
+    await nextThreshold.fill(String(to));
+    await startTiming.click();
+    await expect(dialog.getByRole("progressbar", { name: "Ход замера времени" })).toBeVisible();
+    await expect(timing.locator("tbody tr")).toHaveCount(3, { timeout: 15_000 });
+    await expect(timing.getByRole("rowheader")).toHaveText([
+      /^1\s000\s*Пачка: \d+ · 40 пар$/,
+      /^10\s000\s*Пачка: \d+ · 40 пар$/,
+      /^100\s000\s*Пачка: [2-6] · 40 пар$/,
+    ]);
+    await expect(dialog.getByRole("status")).toContainText(`Пороги ${from} → ${to}. 40 пар`);
+    await expect(timing.locator("tbody tr").first().locator("td").first()).toHaveText(
+      from === 11 ? /999 → 999\s*Состав сохранился/ : /1\s000 → 999\s*Состав изменился/,
+    );
+    await expect(dialog.getByText(/На втором чтении: 3 → 1 вычисление/)).toBeVisible();
+  }
+  const downloadPromise = page.waitForEvent("download");
+  await dialog.getByRole("button", { name: "Скачать замер JSON" }).click();
+  const path = await (await downloadPromise).path();
+  expect(path).toBeTruthy();
+  const report = JSON.parse(readFileSync(path!, "utf8"));
+  expect(report.parameters).toMatchObject({ from: 10, to: 11 });
+  expect(report.rows.map(({ previousSelectionCount, selectionCount }: {
+    previousSelectionCount: number; selectionCount: number;
+  }) => [previousSelectionCount, selectionCount])).toEqual([
+    [1_000, 999], [10_000, 9_999], [100_000, 99_999],
+  ]);
+  await dialog.getByRole("button", { name: "Закрыть сравнение" }).click();
+  await expect(page.getByTestId("readings")).toHaveText(readings);
+  await expect(page.getByTestId("journal").locator(".journal-event-text")).toHaveText(events);
+  await openComparison.click();
+  await dialog.getByRole("region", { name: "Переиспользование массива" })
+    .getByRole("button", { name: /^4\. Прочитать среднее/ }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByTestId("operation-summary")).toContainText("Вычислений: 1");
+});

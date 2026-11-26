@@ -98,9 +98,62 @@ export function snapshotFromJournal(journal: readonly LogEntry[]) {
 }
 export type Snapshot = ReturnType<typeof snapshotFromJournal>;
 
-export function createExperiment(mode: SelectionMode = "normal", inputSales: readonly number[] = sales) {
+type SalesTrace = {
+  called(node: ComputedNode): void;
+  recorded<T extends Value>(node: ComputedNode, value: T): T;
+  readValue<T extends Value>(from: ComputedNode | "external", to: NodeId, read: () => T): T;
+};
+
+export function createSalesGraph(mode: SelectionMode, inputSales: readonly number[], trace?: SalesTrace) {
   let previousSelection: number[] | undefined;
   const threshold = signal(10);
+
+  const filtered = computed(() => {
+    trace?.called("filtered");
+    const minimum = trace ? trace.readValue("filtered", "threshold", () => threshold.value) : threshold.value;
+    const next = inputSales.filter((sale) => sale >= minimum);
+    const previous = previousSelection;
+    if (mode === "reuse-array" && previous && next.length === previous.length &&
+      next.every((sale, index) => sale === previous[index])) {
+      return trace ? trace.recorded("filtered", previous) : previous;
+    }
+    previousSelection = next;
+    return trace ? trace.recorded("filtered", next) : next;
+  });
+
+  const sum = computed(() => {
+    trace?.called("sum");
+    const selected = trace ? trace.readValue("sum", "filtered", () => filtered.value) : filtered.value;
+    const total = selected.reduce((sum, sale) => sum + sale, 0);
+    return trace ? trace.recorded("sum", total) : total;
+  });
+
+  const count = computed(() => {
+    trace?.called("count");
+    const selected = trace ? trace.readValue("count", "filtered", () => filtered.value) : filtered.value;
+    return trace ? trace.recorded("count", selected.length) : selected.length;
+  });
+
+  const average = computed(() => {
+    trace?.called("average");
+    const total = trace ? trace.readValue("average", "sum", () => sum.value) : sum.value;
+    const size = trace ? trace.readValue("average", "count", () => count.value) : count.value;
+    const value = size === 0 ? null : total / size;
+    return trace ? trace.recorded("average", value) : value;
+  });
+
+  return {
+    writeThreshold(value: number) {
+      if (!Number.isFinite(value)) throw new Error("Порог должен быть конечным числом.");
+      threshold.value = value;
+    },
+    readAverage() {
+      return trace ? trace.readValue("external", "average", () => average.value) : average.value;
+    },
+  };
+}
+
+export function createExperiment(mode: SelectionMode = "normal", inputSales: readonly number[] = sales) {
   const calls = { filtered: 0, sum: 0, count: 0, average: 0 };
 
   const journal: LogEntry[] = [{ type: "reset", value: 10, salesCount: inputSales.length, salesPreview: inputSales.slice(0, 5) }];
@@ -134,50 +187,16 @@ export function createExperiment(mode: SelectionMode = "normal", inputSales: rea
     return value;
   }
 
-  const filtered = computed(() => {
-    called("filtered");
-    const minimum = readValue("filtered", "threshold", () => threshold.value);
-    const next = inputSales.filter((sale) => sale >= minimum);
-    if (mode === "reuse-array" && previousSelection &&
-      next.length === previousSelection.length &&
-      next.every((sale, index) => sale === previousSelection![index])) {
-      return recorded("filtered", previousSelection);
-    }
-    previousSelection = next;
-    return recorded("filtered", next);
-  });
-
-  const sum = computed(() => {
-    called("sum");
-    return recorded(
-      "sum",
-      readValue("sum", "filtered", () => filtered.value).reduce((total, sale) => total + sale, 0),
-    );
-  });
-
-  const count = computed(() => {
-    called("count");
-    return recorded("count", readValue("count", "filtered", () => filtered.value).length);
-  });
-
-  const average = computed(() => {
-    called("average");
-    const total = readValue("average", "sum", () => sum.value);
-    const size = readValue("average", "count", () => count.value);
-    // Пустая выборка явно обозначена; снимки остаются JSON-совместимыми.
-    return recorded("average", size === 0 ? null : total / size);
-  });
+  const graph = createSalesGraph(mode, inputSales, { readValue, called, recorded });
 
   function perform(operation: Operation) {
-    if (operation.type === "write" && !Number.isFinite(operation.value)) {
-      throw new Error("Порог должен быть конечным числом.");
-    }
-    journal.push({ ...operation });
     if (operation.type === "write") {
-      threshold.value = operation.value;
+      graph.writeThreshold(operation.value);
+      journal.push({ ...operation });
       return;
     }
-    const value = readValue("external", "average", () => average.value);
+    journal.push({ ...operation });
+    const value = graph.readAverage();
     journal.push({ type: "result", value });
     return value;
   }

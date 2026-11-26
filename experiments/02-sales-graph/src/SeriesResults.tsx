@@ -26,6 +26,7 @@ export function SeriesResults({ report, onInspect }: { report: Series; onInspect
       <span className="lab-status">{report.status === "partial" ? "Частичная" : "Завершена"} · {report.environment.runtime === "node" ? "Node.js" : "Браузер"}</span>
     </div>
     <p className="lab-configuration">{seriesTitle(report)}</p>
+    <p>Здесь проверили, окупается ли сравнение нового и прежнего результата. Каждый вариант воспроизвёл те же действия, а время относится ко всей записи.</p>
     {stats && <p>Состав изменился в {stats.membershipChanges}/{steps} действий · перестановка того же состава в {stats.orderChanges}/{steps}.</p>}
     <div className="lab-table-scroll">
       <table className="lab-table results-table">

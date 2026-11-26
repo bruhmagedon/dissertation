@@ -9,6 +9,7 @@ export interface InspectionTrace {
   variant?: GraphVariant;
   policy: Policy;
   primary: Frame[];
+  initial?: Frame;
   title?: string;
 }
 
@@ -16,6 +17,7 @@ export interface Inspection extends InspectionTrace {
   recording: Recording;
   engine: Engine;
   compare?: Frame[];
+  baseInitial?: Frame;
   alternatives?: InspectionTrace[];
   action: number;
   back: "employees" | "research";
@@ -26,9 +28,22 @@ export function inspectArchitectures(
 ): Inspection {
   const [first, ...alternatives] = ids.map((id): InspectionTrace => {
     const { graph: variant, policy } = architectureConfigs[id];
-    const { graph, frames, stats } = diagnose(recording, engine, policy, { graph: variant });
+    const { graph, initial, frames, stats } = diagnose(recording, engine, policy, { graph: variant });
     if (!stats.valid) throw new Error(stats.error);
-    return { graph, variant, policy, primary: frames, title: id };
+    return { graph, variant, policy, primary: frames, initial, title: id };
   });
   return { ...first, alternatives, action, back, recording, engine };
+}
+
+export const architectureNames: Record<ArchitectureId, string> = {
+  A0: "Общий отбор",
+  A1: "Общий отбор с проверкой списка",
+  B0: "Отбор учитывает только активный фильтр",
+  B1: "Активный фильтр с проверкой списка",
+};
+
+export function inspectionTitle(title: string) {
+  return Object.hasOwn(architectureNames, title)
+    ? title + " · " + architectureNames[title as ArchitectureId]
+    : title;
 }

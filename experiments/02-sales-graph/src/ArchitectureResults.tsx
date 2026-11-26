@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { graphLabels, policyLabels } from "../employees/engine.ts";
-import { architectureConfigs, architectureIds, assessPair, outcomeLabel, summarizeTrial } from "../employees/series.ts";
+import { architectureNames } from "./employee-inspection.ts";
+import { architectureIds, assessPair, outcomeLabel, summarizeTrial } from "../employees/series.ts";
 import type { ArchitectureId, ArchitectureSeries } from "../employees/series.ts";
 import { downloadJson } from "./recording-files.ts";
 import { ms, seriesTitle } from "./SeriesResults.tsx";
@@ -22,14 +22,14 @@ export function ArchitectureResults({ report, onInspect }: {
       <span className="lab-status">{report.status === "partial" ? "Частичная" : "Завершена"} · {report.environment.runtime === "node" ? "Node.js" : "Браузер"}</span>
     </div>
     <p className="lab-configuration">{seriesTitle(report)}</p>
+    <p>Варианты воспроизвели одни и те же действия. В таблице видно, где выполнилось меньше функций и сколько проверок равенства потребовалось.</p>
     <div className="lab-table-scroll"><table className="lab-table results-table">
       <thead><tr><th>Конфигурация</th><th>Эталон</th><th>Всего функций</th><th>Отбор</th><th>Сортировка</th><th>Сводка</th><th>Проверки равенства</th><th>Медиана, мс</th><th>Действия</th></tr></thead>
       <tbody>{architectureIds.map((id) => {
-        const config = architectureConfigs[id];
         const stats = report.diagnostics[id];
         const count = (node: "filtered" | "sorted" | "summary") => stats?.byNode ? stats.byNode[node] ?? 0 : "—";
         return <tr key={id}>
-          <th scope="row">{id}<small className="lab-subline">{graphLabels[config.graph]} · {policyLabels[config.policy]}</small></th>
+          <th scope="row">{id}<small className="lab-subline">{architectureNames[id]}</small></th>
           <td>{stats ? stats.valid ? "Совпало" : stats.error : "—"}</td>
           <td>{stats?.executions ?? "—"}</td><td>{count("filtered")}</td><td>{count("sorted")}</td><td>{count("summary")}</td>
           <td>{stats?.comparisons ?? "—"}</td><td>{ms(summarizeTrial(report, id).median)}</td>
@@ -49,6 +49,7 @@ export function ArchitectureResults({ report, onInspect }: {
         </tr>;
       })}</tbody>
     </table></div>
+    <p className="lab-footnote">Замер охватывает всю запись. Вывод о скорости зависит от парной разницы и её разброса.</p>
     <p className="lab-footnote">Все четыре конфигурации входят в один повтор. Положительная разница означает экономию. Порог {ms(report.parameters.threshold)} мс на запись из {report.recording.steps.length} действий.</p>
     <details className="lab-details"><summary>Паспорт и сырые времена</summary>
       <p>{report.environment.details} · {report.environment.build} · {report.created}</p>

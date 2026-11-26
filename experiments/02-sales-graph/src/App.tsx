@@ -16,10 +16,9 @@ import { computationCount, nodeLabels, operationSteps, operationTraces } from ".
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { ArrowDown, ArrowUp, Moon, RotateCcw, Sun } from "lucide-react";
-import { ThemeTogglerButton, ThemeTogglerButtonIcon } from "@/components/animate-ui/buttons/theme-toggler";
+import { ArrowDown, ArrowUp, RotateCcw } from "lucide-react";
 import { Hint, TooltipProvider } from "@/components/ui/tooltip";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Select, SelectItem } from "@/components/ui/select";
 
 function Journal({
   snapshot,
@@ -75,15 +74,15 @@ function Journal({
         </h2>
         <label className="filter-label">
           Показать{" "}
-          <NativeSelect
+          <Select
             aria-label="Фильтр журнала"
             value={filter}
-            onChange={(event) => setFilter(event.target.value)}
+            onValueChange={(value) => setFilter(value)}
           >
-            <NativeSelectOption value="all">Все события</NativeSelectOption>
-            <NativeSelectOption value="operations">Операции и результаты</NativeSelectOption>
-            <NativeSelectOption value="computed">Вызовы computed</NativeSelectOption>
-          </NativeSelect>
+            <SelectItem value="all">Все события</SelectItem>
+            <SelectItem value="operations">Операции и результаты</SelectItem>
+            <SelectItem value="computed">Вызовы computed</SelectItem>
+          </Select>
         </label>
         <Hint text="Скачать полный журнал без фильтрации">
           <Button variant="outline" onClick={exportJournal}>Скачать TXT</Button>
@@ -105,8 +104,10 @@ function Journal({
                   : null;
               const related = activeRequestId != null && requestId === activeRequestId && index !== activeStep;
               return <li key={index}>
-                <button
-                  className={`log-entry event-${event.type} ${activeStep === index ? "graph-step-active" : related ? "graph-step-related" : ""}`}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className={`log-entry h-auto justify-start rounded-none whitespace-normal event-${event.type} ${activeStep === index ? "graph-step-active" : related ? "graph-step-related" : ""}`}
                   aria-pressed={selected === index}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => onSelect(index)}
@@ -120,7 +121,7 @@ function Journal({
                     const result = events.findLast((entry) => entry.type === "result");
                     return <span className="journal-operation-result"> · {result?.type === "result" ? `Среднее: ${formatValue(result.value)} · ` : ""}{computationCount(computed.length)}{event.type === "read" && !computed.some((entry) => entry.type === "computed" && entry.node === "average") ? " · формула среднего пропущена" : ""}</span>;
                   })()}</span>
-                </button>
+                </Button>
                 {tracesByStart.has(index) && (() => {
                   const trace = tracesByStart.get(index)!;
                   const values = snapshot.log.slice(trace.start, trace.end).flatMap((entry, offset) => {
@@ -184,7 +185,7 @@ function Journal({
   );
 }
 
-export function SalesLab({ theme, setTheme }: { theme: "light" | "dark"; setTheme: (value: "light" | "dark") => void }) {
+export function SalesLab({ theme }: { theme: "light" | "dark" }) {
   const [selectionMode, setSelectionMode] = useState<SelectionMode>("normal");
   const [experiment, setExperiment] = useState(() => createExperiment());
   const [snapshot, setSnapshot] = useState(() => experiment.snapshot());
@@ -279,28 +280,26 @@ export function SalesLab({ theme, setTheme }: { theme: "light" | "dark"; setThem
       <h1 className="sr-only">Лаборатория реактивности</h1>
       <div className="workspace">
         <section id="graph" className="graph-section" aria-label="Полотно эксперимента">
-          <Graph
-            snapshot={snapshot}
-            selectedEvent={selectedEvent}
-            selectionVersion={selectionVersion}
-            theme={theme}
-            mode={graphMode}
-            onModeChange={(mode) => { setGraphMode(mode); setActiveStep(null); }}
-            activeStep={activeStep}
-            onStepChange={setActiveStep}
-          />
-          <Hint text="К журналу · J">
-            <Button asChild variant="outline" size="icon-sm" className="scroll-to-journal">
-              <a href="#journal" aria-label="К журналу" aria-keyshortcuts="J"><ArrowDown aria-hidden="true" /></a>
-            </Button>
-          </Hint>
+          <div className="graph-canvas">
+            <Graph
+              snapshot={snapshot}
+              selectedEvent={selectedEvent}
+              selectionVersion={selectionVersion}
+              theme={theme}
+              mode={graphMode}
+              onModeChange={(mode) => { setGraphMode(mode); setActiveStep(null); }}
+              activeStep={activeStep}
+              onStepChange={setActiveStep}
+            />
+            <Hint text="К журналу · J">
+              <Button asChild variant="outline" size="icon-sm" className="scroll-to-journal">
+                <a href="#journal" aria-label="К журналу" aria-keyshortcuts="J"><ArrowDown aria-hidden="true" /></a>
+              </Button>
+            </Hint>
+          </div>
           <aside
             className="operations"
             aria-label="Управление экспериментом"
-            onPointerDownCapture={(event) => {
-              const control = (event.target as HTMLElement).closest<HTMLElement>("button, input, select, [tabindex]");
-              control?.focus({ preventScroll: true });
-            }}
           >
             <Hint text="В выборку входят продажи, которые больше или равны порогу">
               <div className="sales-compact" tabIndex={0} aria-label={`${snapshot.salesCount} продаж: ${snapshot.salesPreview.join(", ")}`}>
@@ -317,7 +316,7 @@ export function SalesLab({ theme, setTheme }: { theme: "light" | "dark"; setThem
               <label className="sr-only" htmlFor="threshold">Новый порог</label>
               <Input
                 id="threshold"
-                className="w-[120px]! flex-none"
+                className="h-8 w-[78px] flex-none px-2.5 max-[900px]:w-[62px]"
                 type="number"
                 step="any"
                 value={draft}
@@ -345,19 +344,6 @@ export function SalesLab({ theme, setTheme }: { theme: "light" | "dark"; setThem
               <Button size="icon-sm" variant="ghost" onClick={() => start()} aria-label="Начать с чистого графа">
                 <RotateCcw aria-hidden="true" />
               </Button>
-            </Hint>
-            <Hint text={theme === "dark" ? "Светлая тема" : "Тёмная тема"}>
-              <ThemeTogglerButton
-                theme={theme}
-                resolvedTheme={theme}
-                setTheme={(next) => { if (next !== "system") setTheme(next); }}
-                modes={["light", "dark"]}
-                variant="ghost"
-                size="sm"
-                aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
-              >
-                <ThemeTogglerButtonIcon light={<Sun />} dark={<Moon />} />
-              </ThemeTogglerButton>
             </Hint>
           </aside>
           <aside className="snapshot-panel" aria-label="Результаты прогона">

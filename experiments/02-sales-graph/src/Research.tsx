@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { FileInput } from "@/components/ui/file-input";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Select, SelectItem } from "@/components/ui/select";
 import { diagnose, executionDelta } from "../employees/diagnose.ts";
 import { engineLabels, engines, engineVersions, graphLabels, graphVariants, labels, policyLabels } from "../employees/engine.ts";
 import type { Engine, GraphVariant, Policy } from "../employees/engine.ts";
@@ -54,7 +55,7 @@ function strongestEstimate(forecast: Forecast) {
   return forecast.estimates.reduce((best, current) => current.score > best.score ? current : best);
 }
 
-export function Research({ incoming, onInspect }: { incoming: Recording | undefined; onInspect: (item: Inspection) => void }) {
+export function Research({ incoming, onInspect }: { incoming: { recording: Recording; action?: number } | undefined; onInspect: (item: Inspection) => void }) {
   const [source, setSource] = useState<Source>("editing");
   const [custom, setCustom] = useState(savedRecording);
   const [size, setSize] = useState<Size>(100);
@@ -81,7 +82,11 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
   const interpretation = useMemo(() => forecast && validation ? validateForecast(forecast, validation) : undefined, [forecast, validation]);
 
   useEffect(() => {
-    if (incoming) { setCustom(incoming); setSource("custom"); }
+    if (incoming) {
+      setCustom(incoming.recording);
+      setSource("custom");
+      if (incoming.action !== undefined) setComparison("architecture");
+    }
   }, [incoming]);
   useEffect(() => () => { worker.current?.terminate(); }, []);
 
@@ -188,7 +193,7 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
         return delta.omitted.length || delta.added.length;
       });
       onInspect({
-        recording, engine: currentEngine, policy, variant, graph: current.graph, primary: current.frames, compare: base?.frames,
+        recording, engine: currentEngine, policy, variant, graph: current.graph, primary: current.frames, initial: current.initial, compare: base?.frames, baseInitial: base?.initial,
         action: selectedAction ?? Math.max(0, difference ?? 0), back: "research",
       });
     } catch (issue) { setError((issue as Error).message); }
@@ -203,33 +208,33 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
   return <main className="lab-page">
     <header className="lab-page-head">
       <div><h1>Исследование</h1><p>Две архитектуры отбора и проверки равенства на одной записи</p></div>
-      <label className="lab-upload">Импорт серии<input aria-label="Импорт серии" type="file" accept=".json,application/json" disabled={!!busy}
-        onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "series"); event.target.value = ""; }} /></label>
+      <FileInput aria-label="Импорт серии" accept=".json,application/json" disabled={!!busy}
+        onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "series"); event.target.value = ""; }}>Импорт серии</FileInput>
     </header>
 
     <section className="lab-card">
       <h2>Конфигурация</h2>
       <fieldset className="lab-controls research-config" disabled={!!busy}>
-        <label>Запись<NativeSelect aria-label="Запись" value={source} onChange={(event) => setSource(event.target.value as Source)}>
-          {Object.entries(profileLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
-          <option value="demo">Разбор по шагам</option>{custom && <option value="custom">{custom.name}</option>}
-        </NativeSelect></label>
+        <label>Запись<Select aria-label="Запись" value={source} onValueChange={(value) => setSource(value as Source)}>
+          {Object.entries(profileLabels).map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}
+          <SelectItem value="demo">Разбор по шагам</SelectItem>{custom && <SelectItem value="custom">{custom.name}</SelectItem>}
+        </Select></label>
         {source !== "custom" && source !== "demo" && <>
-          <label>Сотрудников<NativeSelect aria-label="Сотрудников" value={size} onChange={(event) => setSize(Number(event.target.value) as Size)}>{sizes.map((item) => <option key={item}>{item}</option>)}</NativeSelect></label>
-          <label>Seed<Input className="lab-number" type="number" min="0" step="1" value={seed} onChange={(event) => setSeed(event.target.value)} /></label>
+          <label>Сотрудников<Select aria-label="Сотрудников" value={String(size)} onValueChange={(value) => setSize(Number(value) as Size)}>{sizes.map((item) => <SelectItem key={item} value={String(item)}>{item}</SelectItem>)}</Select></label>
+          <label>Seed<Input className="w-24" type="number" min="0" step="1" value={seed} onChange={(event) => setSeed(event.target.value)} /></label>
         </>}
-        <label>Движок<NativeSelect aria-label="Движок" value={engine} onChange={(event) => setEngine(event.target.value as Engine)}>
-          {engines.map((entry) => <option key={entry} value={entry}>{engineLabels[entry]}</option>)}
-        </NativeSelect></label>
-        <label>Эксперимент<NativeSelect aria-label="Эксперимент" value={comparison} onChange={(event) => setComparison(event.target.value as typeof comparison)}>
-          <option value="policies">Политики одного графа</option><option value="architecture">Архитектуры A и B</option>
-        </NativeSelect></label>
-        <label>Граф для политик и прогноза<NativeSelect aria-label="Граф для политик и прогноза" value={graph} onChange={(event) => setGraph(event.target.value as GraphVariant)}>
-          {graphVariants.map((item) => <option key={item} value={item}>{item} · {graphLabels[item]}</option>)}
-        </NativeSelect></label>
-        <label>Порог, мс<Input className="lab-number" inputMode="decimal" value={threshold} onChange={(event) => setThreshold(event.target.value)} /></label>
-        <label className="lab-upload">Импорт записи<input aria-label="Импорт записи для исследования" type="file" accept=".json,application/json"
-          onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "source"); event.target.value = ""; }} /></label>
+        <label>Движок<Select aria-label="Движок" value={engine} onValueChange={(value) => setEngine(value as Engine)}>
+          {engines.map((entry) => <SelectItem key={entry} value={entry}>{engineLabels[entry]}</SelectItem>)}
+        </Select></label>
+        <label>Эксперимент<Select aria-label="Эксперимент" value={comparison} onValueChange={(value) => setComparison(value as typeof comparison)}>
+          <SelectItem value="policies">Политики одного графа</SelectItem><SelectItem value="architecture">Архитектуры A и B</SelectItem>
+        </Select></label>
+        <label>Граф для политик и прогноза<Select aria-label="Граф для политик и прогноза" value={graph} onValueChange={(value) => setGraph(value as GraphVariant)}>
+          {graphVariants.map((item) => <SelectItem key={item} value={item}>{item} · {graphLabels[item]}</SelectItem>)}
+        </Select></label>
+        <label>Порог, мс<Input className="w-24" inputMode="decimal" value={threshold} onChange={(event) => setThreshold(event.target.value)} /></label>
+        <FileInput aria-label="Импорт записи для исследования" accept=".json,application/json"
+          onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "source"); event.target.value = ""; }}>Импорт записи</FileInput>
       </fieldset>
       <div className="lab-controls">
         <Button disabled={!!busy} onClick={() => start("pilot")}>Запустить пилот</Button>
@@ -247,9 +252,9 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
     </section>
 
     {selected && <>
-      <label className="series-picker">Показанная серия<NativeSelect aria-label="Показанная серия" value={reports.indexOf(selected)} onChange={(event) => setSelected(reports[Number(event.target.value)])}>
-        {reports.map((item, index) => <option key={index} value={index}>{item.recording.name} · {dataLabel(item.recording)} · {engineLabels[item.engine]} · {"comparison" in item ? "A0/A1/B0/B1" : "граф " + item.graph} · {item.environment.runtime} · {item.created.slice(11, 19)}</option>)}
-      </NativeSelect></label>
+      <label className="series-picker">Показанная серия<Select aria-label="Показанная серия" value={String(reports.indexOf(selected))} onValueChange={(value) => setSelected(reports[Number(value)])}>
+        {reports.map((item, index) => <SelectItem key={index} value={String(index)}>{item.recording.name} · {dataLabel(item.recording)} · {engineLabels[item.engine]} · {"comparison" in item ? "A0/A1/B0/B1" : "граф " + item.graph} · {item.environment.runtime} · {item.created.slice(11, 19)}</SelectItem>)}
+      </Select></label>
       {"comparison" in selected ? <ArchitectureResults report={selected} onInspect={(id) => {
         if (selected.version !== engineVersions[selected.engine]) {
           setError("Для восстановления трассы нужна версия движка из паспорта серии.");
@@ -257,7 +262,9 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
         }
         try {
           const ids = [id, ...(["A0", "A1", "B0", "B1"] as const).filter((entry) => entry !== id)] as const;
-          onInspect(inspectArchitectures(selected.recording, selected.engine, ids, "research", 0));
+          const action = incoming?.action !== undefined && JSON.stringify(selected.recording) === JSON.stringify(incoming.recording)
+            ? incoming.action : 0;
+          onInspect(inspectArchitectures(selected.recording, selected.engine, ids, "research", action));
         } catch (issue) { setError((issue as Error).message); }
       }} /> : <>
         <SeriesResults report={selected} onInspect={(report, policy) => {
@@ -298,13 +305,13 @@ export function Research({ incoming, onInspect }: { incoming: Recording | undefi
         </div>
         <div className="lab-controls validation-controls">
           {forecast.recording.data.kind === "generated" && <label>Проверочный профиль
-            <NativeSelect aria-label="Проверочный профиль" value={validationProfile} disabled={!!holdout || !!busy} onChange={(event) => setValidationProfile(event.target.value as typeof validationProfile)}>
-              <option value="same">{forecast.recording.profile === "custom" ? "Смешанная работа" : "Другая запись того же профиля"}</option>
-              {Object.entries(profileLabels).map(([key, name]) => <option key={key} value={key}>{name} · перенос профиля</option>)}
-            </NativeSelect>
+            <Select aria-label="Проверочный профиль" value={validationProfile} disabled={!!holdout || !!busy} onValueChange={(value) => setValidationProfile(value as typeof validationProfile)}>
+              <SelectItem value="same">{forecast.recording.profile === "custom" ? "Смешанная работа" : "Другая запись того же профиля"}</SelectItem>
+              {Object.entries(profileLabels).map(([key, name]) => <SelectItem key={key} value={key}>{name} · перенос профиля</SelectItem>)}
+            </Select>
           </label>}
-          <label className="lab-upload">{holdout?.name || "Импорт проверочной записи"}<input aria-label="Импорт проверочной записи" type="file" accept=".json,application/json" disabled={!!busy}
-            onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "validation"); event.target.value = ""; }} /></label>
+          <FileInput aria-label="Импорт проверочной записи" accept=".json,application/json" disabled={!!busy}
+            onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file, "validation"); event.target.value = ""; }}>{holdout?.name || "Импорт проверочной записи"}</FileInput>
           {holdout && <Button variant="outline" disabled={!!busy} onClick={() => setHoldout(undefined)}>Использовать пресет</Button>}
           <label className="lab-checkbox"><input type="checkbox" checked={validationExtended} disabled={!!busy}
             onChange={(event) => setValidationExtended(event.target.checked)} /> Расширенная проверка</label>

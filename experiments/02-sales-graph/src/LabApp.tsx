@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeTogglerButton, ThemeTogglerButtonIcon } from "@/components/animate-ui/buttons/theme-toggler";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SalesLab } from "./App.tsx";
 import { EmployeeGraph } from "./EmployeeGraph.tsx";
@@ -40,7 +41,12 @@ export function LabApp({ employeeScreen }: { employeeScreen: ReturnType<typeof i
   const [inspection, setInspection] = useState(() =>
     location.page === "employeeGraph" ? restoredInspection(location.key) : undefined);
   const inspections = useRef(new Map<string, Inspection>());
-  const [recording, setRecording] = useState<Recording>();
+  const [researchSource, setResearchSource] = useState<{ recording: Recording; action?: number }>();
+
+  function openResearch(recording: Recording, action?: number) {
+    setResearchSource({ recording, action });
+    window.location.hash = "/research";
+  }
 
   useEffect(() => {
     function navigate() {
@@ -80,16 +86,26 @@ export function LabApp({ employeeScreen }: { employeeScreen: ReturnType<typeof i
         <a aria-current={page === "employees" ? "page" : undefined} href="#/employees">Сотрудники</a>
         <a aria-current={page === "research" ? "page" : undefined} href="#/research">Исследование</a>
       </nav>
-      {page !== "sales" && <Button variant="ghost" size="icon-sm" aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}</Button>}
+      <ThemeTogglerButton
+        className="ml-auto"
+        theme={theme}
+        resolvedTheme={theme}
+        setTheme={(next) => { if (next !== "system") setTheme(next); }}
+        modes={["light", "dark"]}
+        variant="ghost"
+        size="sm"
+        aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
+      >
+        <ThemeTogglerButtonIcon light={<Sun />} dark={<Moon />} />
+      </ThemeTogglerButton>
     </header>
-    <div hidden={page !== "sales"}><SalesLab theme={theme} setTheme={setTheme} /></div>
+    <div className="sales-route" hidden={page !== "sales"}><SalesLab theme={theme} /></div>
     <div hidden={page !== "employees"}><Employees opening={employeeScreen} onInspect={openInspection}
-      onResearch={(source) => { setRecording(source); window.location.hash = "/research"; }} /></div>
-    <div hidden={page !== "research"}><Research incoming={recording} onInspect={openInspection} /></div>
+      onResearch={openResearch} /></div>
+    <div hidden={page !== "research"}><Research incoming={researchSource} onInspect={openInspection} /></div>
     {location.page === "employeeGraph" && (inspection ? <EmployeeGraph key={location.key} inspection={inspection} index={index} theme={theme}
       onAction={(next) => { window.location.hash = "/laboratory/employees/" + location.key + "/" + (next + 1); }}
-      onBack={() => { window.location.hash = "/" + inspection.back; }} /> :
+      onBack={() => { window.location.hash = "/" + inspection.back; }} onInspect={openInspection} onResearch={openResearch} /> :
       <main className="lab-page"><h1>Полотно сотрудников</h1><p>Откройте записанное действие из таблицы сотрудников или результатов исследования.</p>
         <Button asChild><a href="#/employees">К сотрудникам</a></Button></main>)}
   </TooltipProvider>;

@@ -1,3 +1,4 @@
+import { bootstrapMedianInterval, describe } from "../timing-statistics.ts";
 import { diagnose } from "./diagnose.ts";
 import type { DiagnosticStats } from "./diagnose.ts";
 import { createEmployeeRun, engineVersions, engines, graphVariants, policies } from "./engine.ts";
@@ -137,17 +138,6 @@ async function measure<K extends string>(
   return finish();
 }
 
-export function quantile(values: readonly number[], fraction: number): number {
-  if (!values.length) return NaN;
-  const sorted = [...values].sort((a, b) => a - b);
-  const position = (sorted.length - 1) * fraction;
-  const low = Math.floor(position);
-  return sorted[low] + (sorted[Math.ceil(position)] - sorted[low]) * (position - low);
-}
-export function describe(values: readonly number[]) {
-  return { median: quantile(values, .5), q1: quantile(values, .25), q3: quantile(values, .75) };
-}
-
 function mean(values: readonly number[]) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
@@ -164,13 +154,7 @@ export function paired<K extends string>(report: Benchmark<K>, baseline: NoInfer
     return policy === candidate && before !== undefined ? [before - mean(timesMs)] : [];
   });
   const estimate = describe(deltas);
-  let interval: [number, number] | undefined;
-  if (deltas.length >= 12) {
-    const next = random(report.parameters.seed ^ 0x6b21);
-    const bootstrap = Array.from({ length: 2_000 }, () =>
-      quantile(deltas.map(() => deltas[Math.floor(next() * deltas.length)]), .5));
-    interval = [quantile(bootstrap, .025), quantile(bootstrap, .975)];
-  }
+  const interval = bootstrapMedianInterval(deltas, random(report.parameters.seed ^ 0x6b21));
   return { ...estimate, interval, deltas };
 }
 

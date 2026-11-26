@@ -194,7 +194,7 @@ function CenterGraphButton() {
   return (
     <Hint text="Центрировать граф">
       <ControlButton aria-label="Центрировать граф" onClick={centerGraph}>
-        <Crosshair aria-hidden="true" />
+        <Crosshair className="center-graph-icon" aria-hidden="true" />
       </ControlButton>
     </Hint>
   );
@@ -424,7 +424,7 @@ function ReadingView({ snapshot, trace, viewport, theme, activeStep, onStepChang
                     disabled={step === null}
                     onClick={() => setStep(step === 0 ? null : step! - 1)}
                   >
-                    <ChevronUp aria-hidden="true" />
+                    <ChevronUp className="reading-direction-icon" aria-hidden="true" />
                   </Button>
                 </span>
               </Hint>
@@ -442,7 +442,7 @@ function ReadingView({ snapshot, trace, viewport, theme, activeStep, onStepChang
                     disabled={steps.length === 0 || step === steps.length - 1}
                     onClick={() => setStep(step === null ? 0 : step + 1)}
                   >
-                    <ChevronDown aria-hidden="true" />
+                    <ChevronDown className="reading-direction-icon" aria-hidden="true" />
                   </Button>
                 </span>
               </Hint>
@@ -503,36 +503,16 @@ export function Graph({
     <div className="graph-surface">
       <div className="graph-toolbar" role="group" aria-label="Режим графа">
         <Hint text="Зависимости">
-        <button
-          type="button"
-          className={`mode-icon ${mode === "dependencies" ? "active" : ""}`}
-          aria-label="Зависимости"
-          aria-pressed={mode === "dependencies"}
-          onClick={() => onModeChange("dependencies")}
-        >
-          <Network size={17} aria-hidden="true" />
-        </button>
+          <Button type="button" size="icon-sm" variant={mode === "dependencies" ? "secondary" : "ghost"}
+            aria-label="Зависимости" aria-pressed={mode === "dependencies"} onClick={() => onModeChange("dependencies")}>
+            <Network aria-hidden="true" />
+          </Button>
         </Hint>
-        <button
-          type="button"
-          role="switch"
-          className="mode-switch"
-          aria-label="Порядок чтения"
-          aria-checked={mode === "reading"}
-          onClick={() => onModeChange(mode === "dependencies" ? "reading" : "dependencies")}
-        >
-          <span />
-        </button>
         <Hint text="Порядок чтения">
-        <button
-          type="button"
-          className={`mode-icon ${mode === "reading" ? "active" : ""}`}
-          aria-label="Порядок чтения"
-          aria-pressed={mode === "reading"}
-          onClick={() => onModeChange("reading")}
-        >
-          <ListTree size={17} aria-hidden="true" />
-        </button>
+          <Button type="button" size="icon-sm" variant={mode === "reading" ? "secondary" : "ghost"}
+            aria-label="Порядок чтения" aria-pressed={mode === "reading"} onClick={() => onModeChange("reading")}>
+            <ListTree aria-hidden="true" />
+          </Button>
         </Hint>
       </div>
       {mode === "dependencies" ? (

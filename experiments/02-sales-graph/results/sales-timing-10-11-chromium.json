@@ -1,0 +1,894 @@
+{
+  "timerStepMs": 0.09999999962747097,
+  "rows": [
+    {
+      "salesCount": 1000,
+      "previousSelectionCount": 1000,
+      "selectionCount": 999,
+      "selectionChanged": true,
+      "previousAverage": 510.499,
+      "average": 511,
+      "batchSize": 600,
+      "calibration": [
+        {
+          "batchSize": 2,
+          "probes": [
+            {
+              "normalBatchMs": 0.20000000018626451,
+              "reuseBatchMs": 0
+            },
+            {
+              "normalBatchMs": 0.09999999962747097,
+              "reuseBatchMs": 0
+            },
+            {
+              "normalBatchMs": 0.2999999998137355,
+              "reuseBatchMs": 0
+            }
+          ]
+        },
+        {
+          "batchSize": 4,
+          "probes": [
+            {
+              "normalBatchMs": 0,
+              "reuseBatchMs": 0
+            },
+            {
+              "normalBatchMs": 0.09999999962747097,
+              "reuseBatchMs": 0
+            },
+            {
+              "normalBatchMs": 0.09999999962747097,
+              "reuseBatchMs": 0
+            }
+          ]
+        },
+        {
+          "batchSize": 8,
+          "probes": [
+            {
+              "normalBatchMs": 0.09999999962747097,
+              "reuseBatchMs": 0.20000000018626451
+            },
+            {
+              "normalBatchMs": 0.2999999998137355,
+              "reuseBatchMs": 0.20000000018626451
+            },
+            {
+              "normalBatchMs": 0.09999999962747097,
+              "reuseBatchMs": 0
+            }
+          ]
+        },
+        {
+          "batchSize": 16,
+          "probes": [
+            {
+              "normalBatchMs": 0.39999999944120646,
+              "reuseBatchMs": 0.5
+            },
+            {
+              "normalBatchMs": 0.19999999925494194,
+              "reuseBatchMs": 0.20000000018626451
+            },
+            {
+              "normalBatchMs": 0.40000000037252903,
+              "reuseBatchMs": 0.2999999998137355
+            }
+          ]
+        },
+        {
+          "batchSize": 32,
+          "probes": [
+            {
+              "normalBatchMs": 0.5,
+              "reuseBatchMs": 0.40000000037252903
+            },
+            {
+              "normalBatchMs": 0.5,
+              "reuseBatchMs": 0.5
+            },
+            {
+              "normalBatchMs": 0.40000000037252903,
+              "reuseBatchMs": 0.900000000372529
+            }
+          ]
+        },
+        {
+          "batchSize": 64,
+          "probes": [
+            {
+              "normalBatchMs": 0.8999999994412065,
+              "reuseBatchMs": 0.900000000372529
+            },
+            {
+              "normalBatchMs": 0.900000000372529,
+              "reuseBatchMs": 1.2999999998137355
+            },
+            {
+              "normalBatchMs": 1.400000000372529,
+              "reuseBatchMs": 1.400000000372529
+            }
+          ]
+        },
+        {
+          "batchSize": 128,
+          "probes": [
+            {
+              "normalBatchMs": 2.1000000005587935,
+              "reuseBatchMs": 2
+            },
+            {
+              "normalBatchMs": 2,
+              "reuseBatchMs": 1.900000000372529
+            },
+            {
+              "normalBatchMs": 1.7999999998137355,
+              "reuseBatchMs": 1.8999999994412065
+            }
+          ]
+        },
+        {
+          "batchSize": 256,
+          "probes": [
+            {
+              "normalBatchMs": 3.7999999998137355,
+              "reuseBatchMs": 3.7000000001862645
+            },
+            {
+              "normalBatchMs": 3.7999999998137355,
+              "reuseBatchMs": 3.900000000372529
+            },
+            {
+              "normalBatchMs": 4.099999999627471,
+              "reuseBatchMs": 3.7999999998137355
+            }
+          ]
+        },
+        {
+          "batchSize": 512,
+          "probes": [
+            {
+              "normalBatchMs": 2.099999999627471,
+              "reuseBatchMs": 2.7999999998137355
+            },
+            {
+              "normalBatchMs": 4,
+              "reuseBatchMs": 2.2000000001862645
+            },
+            {
+              "normalBatchMs": 2.2000000001862645,
+              "reuseBatchMs": 1.7000000001862645
+            }
+          ]
+        },
+        {
+          "batchSize": 600,
+          "probes": [
+            {
+              "normalBatchMs": 2.1000000005587935,
+              "reuseBatchMs": 2.2999999998137355
+            },
+            {
+              "normalBatchMs": 4.5,
+              "reuseBatchMs": 2.7999999998137355
+            },
+            {
+              "normalBatchMs": 2.6000000005587935,
+              "reuseBatchMs": 4.2999999998137355
+            }
+          ]
+        }
+      ],
+      "trials": [
+        {
+          "normalBatchMs": 2.699999999254942,
+          "reuseBatchMs": 2.599999999627471
+        },
+        {
+          "normalBatchMs": 3.7000000001862645,
+          "reuseBatchMs": 2.400000000372529
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 2.400000000372529
+        },
+        {
+          "normalBatchMs": 2.599999999627471,
+          "reuseBatchMs": 3.8999999994412065
+        },
+        {
+          "normalBatchMs": 3.2000000001862645,
+          "reuseBatchMs": 2.599999999627471
+        },
+        {
+          "normalBatchMs": 3.8999999994412065,
+          "reuseBatchMs": 2.2999999998137355
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 2.400000000372529
+        },
+        {
+          "normalBatchMs": 2.1000000005587935,
+          "reuseBatchMs": 4.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.3999999994412065,
+          "reuseBatchMs": 2.7000000001862645
+        },
+        {
+          "normalBatchMs": 3.599999999627471,
+          "reuseBatchMs": 2.3999999994412065
+        },
+        {
+          "normalBatchMs": 2.5,
+          "reuseBatchMs": 2.099999999627471
+        },
+        {
+          "normalBatchMs": 2.400000000372529,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 2.599999999627471,
+          "reuseBatchMs": 3.7999999998137355
+        },
+        {
+          "normalBatchMs": 2.099999999627471,
+          "reuseBatchMs": 2.2999999998137355
+        },
+        {
+          "normalBatchMs": 2.6000000005587935,
+          "reuseBatchMs": 2.400000000372529
+        },
+        {
+          "normalBatchMs": 2.7999999998137355,
+          "reuseBatchMs": 3.400000000372529
+        },
+        {
+          "normalBatchMs": 2.3999999994412065,
+          "reuseBatchMs": 2.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.099999999627471,
+          "reuseBatchMs": 2.2999999998137355
+        },
+        {
+          "normalBatchMs": 2.2999999998137355,
+          "reuseBatchMs": 2.5
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 3.6000000005587935
+        },
+        {
+          "normalBatchMs": 3.6000000005587935,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 4,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 2.3999999994412065,
+          "reuseBatchMs": 2.099999999627471
+        },
+        {
+          "normalBatchMs": 2.2999999998137355,
+          "reuseBatchMs": 4.7999999998137355
+        },
+        {
+          "normalBatchMs": 3.7000000001862645,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 3.5,
+          "reuseBatchMs": 2.599999999627471
+        },
+        {
+          "normalBatchMs": 2.400000000372529,
+          "reuseBatchMs": 2
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 2.099999999627471
+        },
+        {
+          "normalBatchMs": 2.7000000001862645,
+          "reuseBatchMs": 3.7999999998137355
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 2,
+          "reuseBatchMs": 2.7999999998137355
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 3.400000000372529
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 3.7000000001862645,
+          "reuseBatchMs": 2.599999999627471
+        },
+        {
+          "normalBatchMs": 2.5,
+          "reuseBatchMs": 2.099999999627471
+        },
+        {
+          "normalBatchMs": 2.2000000001862645,
+          "reuseBatchMs": 4
+        },
+        {
+          "normalBatchMs": 4.099999999627471,
+          "reuseBatchMs": 2.2000000001862645
+        },
+        {
+          "normalBatchMs": 3.599999999627471,
+          "reuseBatchMs": 2.400000000372529
+        },
+        {
+          "normalBatchMs": 2.099999999627471,
+          "reuseBatchMs": 2.2999999998137355
+        },
+        {
+          "normalBatchMs": 2.400000000372529,
+          "reuseBatchMs": 3.6000000005587935
+        }
+      ],
+      "normalMs": 0.004166666666666667,
+      "reuseMs": 0.004000000000620882,
+      "differenceMs": 0.0001666666668218871,
+      "interval": [
+        -0.0003333333336437742,
+        0.0006666666672875484
+      ],
+      "insufficientPrecision": true
+    },
+    {
+      "salesCount": 10000,
+      "previousSelectionCount": 10000,
+      "selectionCount": 9999,
+      "selectionChanged": true,
+      "previousAverage": 5010.4999,
+      "average": 5011,
+      "batchSize": 60,
+      "calibration": [
+        {
+          "batchSize": 2,
+          "probes": [
+            {
+              "normalBatchMs": 0.30000000074505806,
+              "reuseBatchMs": 0.30000000074505806
+            },
+            {
+              "normalBatchMs": 0.20000000018626451,
+              "reuseBatchMs": 0.2999999998137355
+            },
+            {
+              "normalBatchMs": 0.2999999998137355,
+              "reuseBatchMs": 0.09999999962747097
+            }
+          ]
+        },
+        {
+          "batchSize": 4,
+          "probes": [
+            {
+              "normalBatchMs": 0.2999999998137355,
+              "reuseBatchMs": 0.30000000074505806
+            },
+            {
+              "normalBatchMs": 0.20000000018626451,
+              "reuseBatchMs": 0.2999999998137355
+            },
+            {
+              "normalBatchMs": 0.2999999998137355,
+              "reuseBatchMs": 0.2999999998137355
+            }
+          ]
+        },
+        {
+          "batchSize": 8,
+          "probes": [
+            {
+              "normalBatchMs": 0.5,
+              "reuseBatchMs": 0.6000000005587935
+            },
+            {
+              "normalBatchMs": 0.599999999627471,
+              "reuseBatchMs": 0.5
+            },
+            {
+              "normalBatchMs": 0.5,
+              "reuseBatchMs": 0.6000000005587935
+            }
+          ]
+        },
+        {
+          "batchSize": 16,
+          "probes": [
+            {
+              "normalBatchMs": 1,
+              "reuseBatchMs": 1
+            },
+            {
+              "normalBatchMs": 1.2000000001862645,
+              "reuseBatchMs": 1.2999999998137355
+            },
+            {
+              "normalBatchMs": 1.099999999627471,
+              "reuseBatchMs": 1.099999999627471
+            }
+          ]
+        },
+        {
+          "batchSize": 32,
+          "probes": [
+            {
+              "normalBatchMs": 2.2999999998137355,
+              "reuseBatchMs": 2.8999999994412065
+            },
+            {
+              "normalBatchMs": 2.300000000745058,
+              "reuseBatchMs": 2.300000000745058
+            },
+            {
+              "normalBatchMs": 2.3999999994412065,
+              "reuseBatchMs": 2.2000000001862645
+            }
+          ]
+        },
+        {
+          "batchSize": 60,
+          "probes": [
+            {
+              "normalBatchMs": 4.2999999998137355,
+              "reuseBatchMs": 4.3999999994412065
+            },
+            {
+              "normalBatchMs": 6.300000000745058,
+              "reuseBatchMs": 4.300000000745058
+            },
+            {
+              "normalBatchMs": 4.900000000372529,
+              "reuseBatchMs": 5.8999999994412065
+            }
+          ]
+        }
+      ],
+      "trials": [
+        {
+          "normalBatchMs": 4.2000000001862645,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.400000000372529,
+          "reuseBatchMs": 4.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.7999999998137355,
+          "reuseBatchMs": 4.2000000001862645
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.599999999627471
+        },
+        {
+          "normalBatchMs": 5.2000000001862645,
+          "reuseBatchMs": 4.5
+        },
+        {
+          "normalBatchMs": 7.3999999994412065,
+          "reuseBatchMs": 5.300000000745058
+        },
+        {
+          "normalBatchMs": 5.6000000005587935,
+          "reuseBatchMs": 4.300000000745058
+        },
+        {
+          "normalBatchMs": 4.2000000001862645,
+          "reuseBatchMs": 5.5
+        },
+        {
+          "normalBatchMs": 5.300000000745058,
+          "reuseBatchMs": 5.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2000000001862645,
+          "reuseBatchMs": 5.6000000005587935
+        },
+        {
+          "normalBatchMs": 4.400000000372529,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.099999999627471
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.2000000001862645
+        },
+        {
+          "normalBatchMs": 5.5,
+          "reuseBatchMs": 4.3999999994412065
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 5.7999999998137355
+        },
+        {
+          "normalBatchMs": 6.2000000001862645,
+          "reuseBatchMs": 4.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.3999999994412065
+        },
+        {
+          "normalBatchMs": 4.400000000372529,
+          "reuseBatchMs": 4.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 6.7999999998137355
+        },
+        {
+          "normalBatchMs": 4.199999999254942,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 5.199999999254942,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.7000000001862645,
+          "reuseBatchMs": 5.5
+        },
+        {
+          "normalBatchMs": 5.400000000372529,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 5.7000000001862645
+        },
+        {
+          "normalBatchMs": 5.2999999998137355,
+          "reuseBatchMs": 4.5
+        },
+        {
+          "normalBatchMs": 4.3999999994412065,
+          "reuseBatchMs": 5.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2000000001862645,
+          "reuseBatchMs": 4.199999999254942
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2000000001862645,
+          "reuseBatchMs": 4.6000000005587935
+        },
+        {
+          "normalBatchMs": 5.599999999627471,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.3999999994412065,
+          "reuseBatchMs": 5.6000000005587935
+        },
+        {
+          "normalBatchMs": 5.5,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.599999999627471
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.2000000001862645
+        },
+        {
+          "normalBatchMs": 4.400000000372529,
+          "reuseBatchMs": 4.2000000001862645
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 4.300000000745058
+        },
+        {
+          "normalBatchMs": 5.5,
+          "reuseBatchMs": 4.400000000372529
+        },
+        {
+          "normalBatchMs": 4.2999999998137355,
+          "reuseBatchMs": 5.2999999998137355
+        },
+        {
+          "normalBatchMs": 6.199999999254942,
+          "reuseBatchMs": 4.2999999998137355
+        },
+        {
+          "normalBatchMs": 4.5,
+          "reuseBatchMs": 5.599999999627471
+        }
+      ],
+      "normalMs": 0.07333333333178113,
+      "reuseMs": 0.07333333333954214,
+      "differenceMs": 7.761021455128988e-12,
+      "interval": [
+        -0.003333333344198763,
+        0.0033333333364377418
+      ],
+      "insufficientPrecision": true
+    },
+    {
+      "salesCount": 100000,
+      "previousSelectionCount": 100000,
+      "selectionCount": 99999,
+      "selectionChanged": true,
+      "previousAverage": 50010.49999,
+      "average": 50011,
+      "batchSize": 6,
+      "calibration": [
+        {
+          "batchSize": 2,
+          "probes": [
+            {
+              "normalBatchMs": 1.7000000001862645,
+              "reuseBatchMs": 1.699999999254942
+            },
+            {
+              "normalBatchMs": 1.599999999627471,
+              "reuseBatchMs": 1.7000000001862645
+            },
+            {
+              "normalBatchMs": 1.7000000001862645,
+              "reuseBatchMs": 1.599999999627471
+            }
+          ]
+        },
+        {
+          "batchSize": 4,
+          "probes": [
+            {
+              "normalBatchMs": 3.400000000372529,
+              "reuseBatchMs": 3.3999999994412065
+            },
+            {
+              "normalBatchMs": 3.7999999998137355,
+              "reuseBatchMs": 5
+            },
+            {
+              "normalBatchMs": 3.2999999998137355,
+              "reuseBatchMs": 3.2999999998137355
+            }
+          ]
+        },
+        {
+          "batchSize": 6,
+          "probes": [
+            {
+              "normalBatchMs": 5.2000000001862645,
+              "reuseBatchMs": 6.599999999627471
+            },
+            {
+              "normalBatchMs": 6.300000000745058,
+              "reuseBatchMs": 5.1000000005587935
+            },
+            {
+              "normalBatchMs": 5.8999999994412065,
+              "reuseBatchMs": 5
+            }
+          ]
+        }
+      ],
+      "trials": [
+        {
+          "normalBatchMs": 5.1000000005587935,
+          "reuseBatchMs": 6.099999999627471
+        },
+        {
+          "normalBatchMs": 5.800000000745058,
+          "reuseBatchMs": 4.900000000372529
+        },
+        {
+          "normalBatchMs": 6.1000000005587935,
+          "reuseBatchMs": 5.1000000005587935
+        },
+        {
+          "normalBatchMs": 5,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 5.199999999254942,
+          "reuseBatchMs": 5.900000000372529
+        },
+        {
+          "normalBatchMs": 5.1000000005587935,
+          "reuseBatchMs": 5.7000000001862645
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 5.1000000005587935
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 6.2999999998137355
+        },
+        {
+          "normalBatchMs": 5.1000000005587935,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 5.8999999994412065,
+          "reuseBatchMs": 5.2999999998137355
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 5
+        },
+        {
+          "normalBatchMs": 5.2000000001862645,
+          "reuseBatchMs": 6.099999999627471
+        },
+        {
+          "normalBatchMs": 5.1000000005587935,
+          "reuseBatchMs": 5.900000000372529
+        },
+        {
+          "normalBatchMs": 5.5,
+          "reuseBatchMs": 5.699999999254942
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 4.900000000372529
+        },
+        {
+          "normalBatchMs": 6.2000000001862645,
+          "reuseBatchMs": 6.2999999998137355
+        },
+        {
+          "normalBatchMs": 5.699999999254942,
+          "reuseBatchMs": 6.1000000005587935
+        },
+        {
+          "normalBatchMs": 5.900000000372529,
+          "reuseBatchMs": 5.3999999994412065
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 5
+        },
+        {
+          "normalBatchMs": 5,
+          "reuseBatchMs": 6.099999999627471
+        },
+        {
+          "normalBatchMs": 5.2000000001862645,
+          "reuseBatchMs": 6.7999999998137355
+        },
+        {
+          "normalBatchMs": 5.2000000001862645,
+          "reuseBatchMs": 6.099999999627471
+        },
+        {
+          "normalBatchMs": 6,
+          "reuseBatchMs": 5
+        },
+        {
+          "normalBatchMs": 5.6000000005587935,
+          "reuseBatchMs": 6.2000000001862645
+        },
+        {
+          "normalBatchMs": 5,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 5.8999999994412065,
+          "reuseBatchMs": 5
+        },
+        {
+          "normalBatchMs": 6.400000000372529,
+          "reuseBatchMs": 5.3999999994412065
+        },
+        {
+          "normalBatchMs": 4.7999999998137355,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 5,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 4.900000000372529,
+          "reuseBatchMs": 5.599999999627471
+        },
+        {
+          "normalBatchMs": 6.1000000005587935,
+          "reuseBatchMs": 5.199999999254942
+        },
+        {
+          "normalBatchMs": 5.7000000001862645,
+          "reuseBatchMs": 6.099999999627471
+        },
+        {
+          "normalBatchMs": 5,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 5.800000000745058,
+          "reuseBatchMs": 5.2999999998137355
+        },
+        {
+          "normalBatchMs": 6.099999999627471,
+          "reuseBatchMs": 5
+        },
+        {
+          "normalBatchMs": 5.099999999627471,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 4.8999999994412065,
+          "reuseBatchMs": 6
+        },
+        {
+          "normalBatchMs": 4.8999999994412065,
+          "reuseBatchMs": 5.900000000372529
+        },
+        {
+          "normalBatchMs": 5.7000000001862645,
+          "reuseBatchMs": 5.2000000001862645
+        },
+        {
+          "normalBatchMs": 5.7000000001862645,
+          "reuseBatchMs": 6.3999999994412065
+        }
+      ],
+      "normalMs": 0.9416666666511446,
+      "reuseMs": 0.9833333333954215,
+      "differenceMs": -0.08333333341094354,
+      "interval": [
+        -0.1416666666045785,
+        0.08333333341094354
+      ],
+      "insufficientPrecision": false
+    }
+  ],
+  "protocol": "sales-2",
+  "unit": "ms/operation",
+  "created": "2026-11-26T17:42:40.249Z",
+  "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36",
+  "build": "production · 485582999e8b",
+  "signalsVersion": "1.14.5",
+  "parameters": {
+    "sizes": [
+      1000,
+      10000,
+      100000
+    ],
+    "warmupPairs": 8,
+    "pairs": 40,
+    "groupSize": 4,
+    "calibrationWarmupPairs": 4,
+    "calibrationPairs": 3,
+    "targetBatchMs": 4,
+    "maxSalesPerMode": 600000,
+    "bootstrapSeed": 144,
+    "from": 10,
+    "to": 11
+  }
+}
